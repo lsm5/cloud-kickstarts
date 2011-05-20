@@ -1,13 +1,13 @@
 # Build a basic Fedora 14 AMI
 lang en_US.UTF-8
 keyboard us
-timezone US/Eastern
+timezone --utc America/New_York
 auth --useshadow --enablemd5
-selinux --permissive
-firewall --disabled
-bootloader --timeout=1 
-network --bootproto=dhcp --device=eth0 --onboot=on
-services --enabled=network,ssh
+selinux --enforcing
+firewall --service=ssh
+bootloader --timeout=1 --location=mbr --driveorder=sda
+network --bootproto=dhcp --device=em1 --onboot=on
+services --enabled=network,sshd,rsyslog
 
 # By default the root password is emptied
 
@@ -15,7 +15,7 @@ services --enabled=network,ssh
 # Define how large you want your rootfs to be
 # NOTE: S3-backed AMIs have a limit of 10G
 #
-part / --size 10000 --fstype ext3 --ondisk sda
+part / --size 10000 --fstype ext4 --ondisk sda
 
 #
 # Repositories
@@ -59,9 +59,10 @@ iputils
 # disable root password based login
 cat >> /etc/ssh/sshd_config << EOF
 PermitRootLogin no
-PasswordAuthentication no
 UseDNS no
 EOF
+
+sed 's|\(^PasswordAuthentication \)yes|\1no|' /etc/ssh/sshd_config
 
 # create ec2-user
 /usr/sbin/useradd ec2-user
@@ -97,6 +98,14 @@ done
 # make sure firstboot doesn't start
 echo "RUN_FIRSTBOOT=NO" > /etc/sysconfig/firstboot
 
+# fstab mounting is different for x86_64 and i386
+cat <<EOL > /etc/fstab
+LABEL=_/   /         ext4    defaults        1 1
+proc       /proc     proc    defaults        0 0
+sysfs      /sys      sysfs   defaults        0 0
+devpts     /dev/pts  devpts  gid=5,mode=620  0 0
+tmpfs      /dev/shm  tmpfs   defaults        0 0
+EOL
 if [ ! -d /lib64 ] ; then
 
 cat <<EOL >> /etc/fstab
@@ -107,6 +116,16 @@ EOL
 echo "hwcap 1 nosegneg" > /etc/ld.so.conf.d/libc6-xen.conf
 
 fi
+
+# grub tweaks
+sed -i -e 's/timeout=5/timeout=0/' \
+    -e 's|root=[^ ]\+|root=LABEL=_/|' \
+    -e '/splashimage/d' /boot/grub/grub.conf
+
+# symlink grub.conf to menu.lst for use by EC2 pv-grub
+pushd /boot/grub
+ln -s grub.conf menu.lst
+popd
 
 
 %end
