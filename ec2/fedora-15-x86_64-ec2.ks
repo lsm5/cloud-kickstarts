@@ -76,6 +76,7 @@ if [ ! -d /home/ec2-user/.ssh ]; then
 fi
 
 # Fetch public key using HTTP
+ATTEMPTS=10
 while [ ! -f /home/ec2-user/.ssh/authorized_keys ]; do
     curl -f http://169.254.169.254/latest/meta-data/public-keys/0/openssh-key > /tmp/aws-key 2>/dev/null
     if [ \$? -eq 0 ]; then
@@ -94,6 +95,7 @@ while [ ! -f /home/ec2-user/.ssh/authorized_keys ]; do
         sleep 5
     fi
 done
+EOF
 
 # make sure firstboot doesn't start
 echo "RUN_FIRSTBOOT=NO" > /etc/sysconfig/firstboot
