@@ -1,4 +1,4 @@
-# Build a basic Fedora 14 AMI
+# Build a basic Fedora 16 AMI
 lang en_US.UTF-8
 keyboard us
 timezone --utc America/New_York
@@ -55,6 +55,10 @@ iputils
 
 -firstboot
 -biosdevname
+
+# package to setup cloudy bits for us
+cloud-init
+
 %end
 
 # more ec2-ify
@@ -66,40 +70,11 @@ PermitRootLogin no
 UseDNS no
 EOF
 
-sed 's|\(^PasswordAuthentication \)yes|\1no|' /etc/ssh/sshd_config
+sed 's|^#PasswordAuthentication yes|PasswordAuthentication no|' /etc/ssh/sshd_config
 
 # create ec2-user
 /usr/sbin/useradd ec2-user
 /bin/echo -e 'ec2-user\tALL=(ALL)\tNOPASSWD: ALL' >> /etc/sudoers
-
-# set up ssh key fetching
-cat >> /etc/rc.local << EOF
-if [ ! -d /home/ec2-user/.ssh ]; then
-  mkdir -p /home/ec2-user/.ssh
-  chmod 700 /home/ec2-user/.ssh
-fi
-
-# Fetch public key using HTTP
-ATTEMPTS=10
-while [ ! -f /home/ec2-user/.ssh/authorized_keys ]; do
-    curl -f http://169.254.169.254/latest/meta-data/public-keys/0/openssh-key > /tmp/aws-key 2>/dev/null
-    if [ \$? -eq 0 ]; then
-        cat /tmp/aws-key >> /home/ec2-user/.ssh/authorized_keys
-        chmod 0600 /home/ec2-user/.ssh/authorized_keys
-        restorecon /home/ec2-user/.ssh/authorized_keys
-        rm -f /tmp/aws-key
-        echo "Successfully retrieved AWS public key from instance metadata"
-    else
-        FAILED=\$((\$FAILED + 1))
-        if [ \$FAILED -ge \$ATTEMPTS ]; then
-            echo "Failed to retrieve AWS public key after \$FAILED attempts, quitting"
-            break
-        fi
-        echo "Could not retrieve AWS public key (attempt #\$FAILED/\$ATTEMPTS), retrying in 5 seconds..."
-        sleep 5
-    fi
-done
-EOF
 
 # fstab mounting is different for x86_64 and i386
 cat <<EOL > /etc/fstab
@@ -120,10 +95,17 @@ echo "hwcap 1 nosegneg" > /etc/ld.so.conf.d/libc6-xen.conf
 
 fi
 
+# idle=nomwait is to allow xen images to boot and not try use cpu features that are not supported
 # grub tweaks
 sed -i -e 's/timeout=5/timeout=0/' \
-    -e 's|root=[^ ]\+|root=LABEL=_/|' \
-    -e '/splashimage/d' /boot/grub/grub.conf
+    -e 's|root=[^ ]\+|root=LABEL=_/  idle=halt|' \
+    -e '/splashimage/d' \
+    /boot/grub/grub.conf
+
+# the firewall rules get saved as .old  without this we end up not being able 
+# ssh in as iptables blocks access
+
+rename .old "" /etc/sysconfig/*old
 
 # symlink grub.conf to menu.lst for use by EC2 pv-grub
 pushd /boot/grub
