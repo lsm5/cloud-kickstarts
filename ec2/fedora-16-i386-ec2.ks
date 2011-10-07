@@ -25,7 +25,7 @@ repo --name=fedora --mirrorlist=http://mirrors.fedoraproject.org/mirrorlist?repo
 #
 # Add all the packages after the base packages
 #
-%packages --excludedocs --nobase --instLangs=en
+%packages --nobase
 @core
 system-config-securitylevel-tui
 audit
