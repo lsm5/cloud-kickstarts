@@ -64,14 +64,6 @@ cloud-init
 # more ec2-ify
 %post --erroronfail
 
-# disable root password based login
-cat >> /etc/ssh/sshd_config << EOF
-PermitRootLogin no
-UseDNS no
-EOF
-
-sed 's|^#PasswordAuthentication yes|PasswordAuthentication no|' /etc/ssh/sshd_config
-
 # create ec2-user
 /usr/sbin/useradd ec2-user
 /bin/echo -e 'ec2-user\tALL=(ALL)\tNOPASSWD: ALL' >> /etc/sudoers
