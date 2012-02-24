@@ -33,8 +33,6 @@ pciutils
 bash
 coreutils
 kernel-PAE
-grub
--grub2
 
 e2fsprogs
 passwd
@@ -97,7 +95,7 @@ sed -i -e 's/timeout=5/timeout=0/' \
 # the firewall rules get saved as .old  without this we end up not being able 
 # ssh in as iptables blocks access
 
-rename .old "" /etc/sysconfig/*old
+rename -v  .old "" /etc/sysconfig/*old
 
 # symlink grub.conf to menu.lst for use by EC2 pv-grub
 pushd /boot/grub
