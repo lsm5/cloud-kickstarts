@@ -27,31 +27,10 @@ repo --name=fedora --mirrorlist=http://mirrors.fedoraproject.org/mirrorlist?repo
 #
 %packages --nobase
 @core
-system-config-securitylevel-tui
-audit
 pciutils
-bash
-coreutils
 kernel
-
-e2fsprogs
-passwd
-policycoreutils
-chkconfig
-rootfiles
-yum
-vim-minimal
 acpid
-openssh-clients
-openssh-server
-curl
-sudo
 
-#Allow for dhcp access
-dhclient
-iputils
-
--firstboot
 -biosdevname
 
 # package to setup cloudy bits for us
