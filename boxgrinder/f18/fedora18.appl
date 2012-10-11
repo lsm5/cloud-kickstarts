@@ -1,0 +1,14 @@
+name: Fedora-18-min
+summary: Fedora 18 Minimal
+os:
+  name: fedora
+  version: 18
+  release: 0
+hardware:
+  partitions:
+    "/":
+      size: 10
+packages:
+  - @core
+  - pciutils
+  - kernel
