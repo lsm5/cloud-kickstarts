@@ -40,10 +40,6 @@ cloud-init
 # more ec2-ify
 %post --erroronfail
 
-# create ec2-user
-/usr/sbin/useradd ec2-user
-/bin/echo -e 'ec2-user\tALL=(ALL)\tNOPASSWD: ALL' >> /etc/sudoers
-
 # fstab mounting is different for x86_64 and i386
 cat <<EOL > /etc/fstab
 LABEL=_/   /         ext4    defaults        1 1
