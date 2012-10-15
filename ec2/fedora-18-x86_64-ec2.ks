@@ -1,4 +1,4 @@
-# Build a basic Fedora 16 AMI
+# Build a basic Fedora 18 AMI
 lang en_US.UTF-8
 keyboard us
 timezone --utc America/New_York
@@ -19,7 +19,7 @@ part / --size 10000 --fstype ext4 --ondisk sda
 
 #
 # Repositories
-repo --name=fedora --mirrorlist=http://mirrors.fedoraproject.org/mirrorlist?repo=fedora-16&arch=$basearch
+repo --name=fedora --mirrorlist=http://mirrors.fedoraproject.org/mirrorlist?repo=fedora-18&arch=$basearch
 
 #
 #
