@@ -29,6 +29,7 @@ repo --name=fedora --mirrorlist=http://mirrors.fedoraproject.org/mirrorlist?repo
 @core
 pciutils
 kernel-PAE
+man-db
 
 -biosdevname
 
