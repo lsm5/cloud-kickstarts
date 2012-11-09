@@ -36,6 +36,11 @@ pciutils
 kernel
 man-db
 
+# this will get removed later in this file, but 
+# having it here lets dracut strip the initramfs
+binutils
+
+# leave eth0 alone
 -biosdevname
 
 # package to setup cloudy bits for us
@@ -45,6 +50,9 @@ cloud-init
 
 # more ec2-ify
 %post --erroronfail
+
+yum -y remove binutils
+
 
 # fstab mounting is different for x86_64 and i386
 cat <<EOL > /etc/fstab
