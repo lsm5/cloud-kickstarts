@@ -17,6 +17,11 @@ services --enabled=network,sshd,rsyslog
 #
 part / --size 10000 --fstype ext4 --ondisk sda
 
+# This will let fussy, fussy grub2 install, if we
+# decide we want that.
+#part biosboot --fstype=biosboot --size=1 --ondisk sda
+
+
 #
 # Repositories
 repo --name=fedora --mirrorlist=http://mirrors.fedoraproject.org/mirrorlist?repo=fedora-18&arch=$basearch
