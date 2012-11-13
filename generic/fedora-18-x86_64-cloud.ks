@@ -34,6 +34,8 @@ pciutils
 kernel
 man-db
 grub2
+# if we're not going to be installing firewalld, we need this
+iptables-services
 
 # and, some things from @core we can do without
 -biosdevname
