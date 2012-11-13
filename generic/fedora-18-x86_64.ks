@@ -26,7 +26,6 @@ repo --name=fedoradev --baseurl=http://linux.seas.harvard.edu/fedora/linux/devel
 # functional Fedora-like but still reasonably minimal cloud image.
 %packages --nobase
 @core
-pciutils
 kernel
 man-db
 grub2

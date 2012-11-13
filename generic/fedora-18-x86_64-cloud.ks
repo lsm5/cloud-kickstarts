@@ -30,7 +30,6 @@ repo --name=fedoradev --baseurl=http://linux.seas.harvard.edu/fedora/linux/devel
 %packages --nobase
 @core
 cloud-init
-pciutils
 kernel
 man-db
 grub2
