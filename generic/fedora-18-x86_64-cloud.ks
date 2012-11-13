@@ -31,7 +31,6 @@ repo --name=fedoradev --baseurl=http://linux.seas.harvard.edu/fedora/linux/devel
 @core
 cloud-init
 kernel
-man-db
 grub2
 # if we're not going to be installing firewalld, we need this
 iptables-services
