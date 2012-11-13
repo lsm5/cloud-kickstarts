@@ -21,9 +21,7 @@ part biosboot --fstype=biosboot --size=1 --ondisk sda
 part / --size 4000 --fstype ext4 --ondisk sda
 
 # Repositories
-#repo --name=fedora --mirrorlist=http://mirrors.fedoraproject.org/mirrorlist?repo=fedora-18&arch=$basearch
-#temporarily hardcode because many mirrors don't have 0.7
-repo --name=fedoradev --baseurl=http://linux.seas.harvard.edu/fedora/linux/development/18/x86_64/os/
+repo --name=fedora --mirrorlist=http://mirrors.fedoraproject.org/mirrorlist?repo=fedora-18&arch=$basearch
 
 # We start with @core, and then add a few more packages to make a nice
 # functional Fedora-like but still reasonably minimal cloud image.
