@@ -77,10 +77,15 @@ echo .
 
 echo -n "Grub tweaks"
 echo GRUB_TIMEOUT=0 > /etc/default/grub
-sed -ie 's/^set timeout=5/set timeout=0/' /boot/grub2/grub.cfg
+sed -i 's/^set timeout=5/set timeout=0/' /boot/grub2/grub.cfg
+sed -i '1i# This file is for use with pv-grub; legacy grub is not installed in this image' /boot/grub2/grub.cfg
+sed -i 's/^set timeout=5/set timeout=0/' /boot/grub/grub.conf
+# need to file a bug on this one
+sed -i 's/root=.*/root=LABEL=_\//' /boot/grub/grub.conf
 echo .
-
-# for EC2, need to figure out how to set up menu.list for pv-grub
+echo -n "Linking menu.lst to old-style grub.conf for pv-grub"
+mv /boot/grub/grub.conf /boot/grub/menu.lst
+ln -s /boot/grub/menu.lst /etc/grub.conf
 
 
 # setup systemd to boot to the right runlevel
