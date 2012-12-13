@@ -116,6 +116,11 @@ cat <<EOF > /etc/sysconfig/iptables
 COMMIT
 EOF
 
+# Because memory is scarce resource in most cloud/virt environments,
+# and because this impedes forensics, we are differing from the Fedora
+# default of having /tmp on tmpfs.
+systemctl mask tmp.mount
+
 # This forces the filesystem to reclaim space from deleted files
 dd bs=1M if=/dev/zero of=/var/tmp/zeros || :
 rm -f /var/tmp/zeros
