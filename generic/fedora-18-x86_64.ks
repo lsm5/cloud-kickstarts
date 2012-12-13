@@ -45,6 +45,10 @@ firewalld
 # security groups you can remove this.
 iptables-services
 
+# cherry-pick a few things from @standard
+logrotate
+tmpwatch
+
 # Some things from @core we can do without in a minimal install
 -biosdevname
 -plymouth
@@ -82,10 +86,10 @@ rm -f /etc/systemd/system/default.target
 ln -s /lib/systemd/system/multi-user.target /etc/systemd/system/default.target
 echo .
 
-# because we didn't install rsyslog, enable persistent journal
-echo -n "Enabling persistent journal"
-mkdir /var/log/journal/ 
-echo .
+# If you want to remove rsyslog and just use journald, also uncomment this.
+#echo -n "Enabling persistent journal"
+#mkdir /var/log/journal/ 
+#echo .
 
 # this is installed by default but we don't need it in virt
 echo "Removing linux-firmware package."
