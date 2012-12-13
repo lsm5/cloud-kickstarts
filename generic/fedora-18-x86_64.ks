@@ -48,6 +48,8 @@ iptables-services
 # cherry-pick a few things from @standard
 logrotate
 tmpwatch
+tar
+rsync
 
 # Some things from @core we can do without in a minimal install
 -biosdevname
