@@ -71,7 +71,7 @@ iptables-services
 
 echo -n "Writing fstab"
 cat <<EOF > /etc/fstab
-LABEL=_/   /         ext4    defaults,relatime        1 1
+LABEL=_/   /         ext4    defaults        1 1
 EOF
 echo .
 
