@@ -8,40 +8,58 @@
 lang en_US.UTF-8
 keyboard us
 timezone --utc America/New_York
+
 auth --useshadow --enablemd5
 selinux --enforcing
+
 # this is actually not used, but a static firewall
 # matching these rules is generated below.
 firewall --service=ssh --service=http --service=https
+
 bootloader --timeout=0 --location=mbr --driveorder=sda
+
 network --bootproto=dhcp --device=eth0 --onboot=on
 services --enabled=network,sshd,rsyslog,iptables
 
 
-# Define how large you want your rootfs to be
+# Define how large you want your rootfs to be. 
+# See root-resizefs below.
 part biosboot --fstype=biosboot --size=1 --ondisk sda
 part / --size 1024 --fstype ext4 --ondisk sda
 
 # Repositories
 repo --name=fedora --mirrorlist=http://mirrors.fedoraproject.org/mirrorlist?repo=fedora-18&arch=$basearch
 
-# We start with @core, and then add a few more packages to make a nice
-# functional Fedora-like but still reasonably minimal cloud image.
+
+# Packag list.
+# "Obsessively minimal as we can reasonably get and still be Fedora."
 %packages --nobase
 @core
 kernel
+
+# Not needed with pv-grub (as in EC2). Would be nice to have
+# something smaller for F19 (syslinux?), but this is what we have now.
 grub2
+
+# Needed initially, but removed below.
 firewalld
+
+# Basic firewall. If you're going to rely on your cloud service's
+# security groups you can remove this.
 iptables-services
 
+# Grows the filesystem to match the actual device size. You could instead
+# choose the final size above and remove this.
+rootfs-resize
 
-# and, some things from @core we can do without in a minimal install
+# Some things from @core we can do without in a minimal install
 -biosdevname
 -plymouth
 -NetworkManager
 -polkit
 
-# ultra-minimal, in fact.
+# These are "leaf" packages which can be done without in an ultra-minimal
+# install, but which actually remove typical functionality
 -e2fsprogs
 -audit
 -rsyslog
@@ -53,7 +71,8 @@ iptables-services
 
 %end
 
-# Configuration
+
+
 %post --erroronfail
 
 cat <<EOF > /etc/fstab
@@ -77,10 +96,10 @@ mkdir /var/log/journal/
 # this is installed by default but we don't need it in virt
 yum -C -y remove linux-firmware
 
-# remove firewalld; was supposed to be optional in F18, but is required to
-# be present for image building. 
+# Remove firewalld; was supposed to be optional in F18, but is required to
+# be present for install/image building.
 yum -C -y remove firewalld
-#
+# These are all pulled in by firewalld
 yum -C -y remove cairo dbus-glib dbus-python ebtables fontconfig fontpackages-filesystem gobject-introspection js libdrm libpciaccess libpng libselinux-python libwayland-client libwayland-server libX11 libX11-common libXau libxcb libXdamage libXext libXfixes libXrender libXxf86vm mesa-libEGL mesa-libgbm mesa-libGL mesa-libglapi pixman polkit pycairo pygobject2 pygobject3 python-decorator python-slip python-slip-dbus
 
 # Non-firewalld-firewall
@@ -106,6 +125,9 @@ EOF
 # This forces the filesystem to reclaim space from deleted files
 dd bs=1M if=/dev/zero of=/var/tmp/zeros || :
 rm -f /var/tmp/zeros
+
+# This is used by rootfs-resize
+touch /.rootfs-repartition
 
 %end
 
