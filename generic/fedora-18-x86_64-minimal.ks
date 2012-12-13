@@ -69,34 +69,44 @@ iptables-services
 
 %post --erroronfail
 
+echo -n "Writing fstab"
 cat <<EOF > /etc/fstab
 LABEL=_/   /         ext4    defaults        1 1
 EOF
+echo .
 
-
-# grub tweaks
+echo -n "Grub tweaks"
 echo GRUB_TIMEOUT=0 > /etc/default/grub
 sed -ie 's/^set timeout=5/set timeout=0/' /boot/grub2/grub.cfg
+echo .
 
 # for EC2, need to figure out how to set up menu.list for pv-grub
 
+
 # setup systemd to boot to the right runlevel
+echo -n "Setting default runlevel to multiuser text mode"
 rm -f /etc/systemd/system/default.target
 ln -s /lib/systemd/system/multi-user.target /etc/systemd/system/default.target
+echo .
 
 # because we didn't install rsyslog, enable persistent journal
+echo -n "Enabling persistent journal"
 mkdir /var/log/journal/ 
+echo .
 
 # this is installed by default but we don't need it in virt
+echo "Removing linux-firmware package."
 yum -C -y remove linux-firmware
 
 # Remove firewalld; was supposed to be optional in F18, but is required to
 # be present for install/image building.
+echo "Removing firewalld and dependencies"
 yum -C -y remove firewalld
 # These are all pulled in by firewalld
 yum -C -y remove cairo dbus-glib dbus-python ebtables fontconfig fontpackages-filesystem gobject-introspection js libdrm libpciaccess libpng libselinux-python libwayland-client libwayland-server libX11 libX11-common libXau libxcb libXdamage libXext libXfixes libXrender libXxf86vm mesa-libEGL mesa-libgbm mesa-libGL mesa-libglapi pixman polkit pycairo pygobject2 pygobject3 python-decorator python-slip python-slip-dbus
 
 # Non-firewalld-firewall
+echo -n "Writing static firewall"
 cat <<EOF > /etc/sysconfig/iptables
 # Simple static firewall loaded by iptables.service. Replace
 # this with your own custom rules, run lokkit, or switch to 
@@ -115,15 +125,19 @@ cat <<EOF > /etc/sysconfig/iptables
 -A FORWARD -j REJECT --reject-with icmp-host-prohibited
 COMMIT
 EOF
+echo .
 
 # Because memory is scarce resource in most cloud/virt environments,
 # and because this impedes forensics, we are differing from the Fedora
 # default of having /tmp on tmpfs.
+echo "Disabling tmpfs for /tmp."
 systemctl mask tmp.mount
 
+echo "Zeroing out empty space."
 # This forces the filesystem to reclaim space from deleted files
 dd bs=1M if=/dev/zero of=/var/tmp/zeros || :
 rm -f /var/tmp/zeros
+echo "(Don't worry -- that out-of-space error was expected.)"
 
 %end
 
