@@ -21,7 +21,7 @@ services --enabled=network,sshd,rsyslog,iptables
 
 
 part biosboot --fstype=biosboot --size=1 --ondisk sda
-part / --size 1024 --fstype ext4 --ondisk sda
+part / --size 4096 --fstype ext4 --ondisk sda
 
 # Repositories
 repo --name=fedora --mirrorlist=http://mirrors.fedoraproject.org/mirrorlist?repo=fedora-18&arch=$basearch
