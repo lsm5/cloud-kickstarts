@@ -22,8 +22,6 @@ network --bootproto=dhcp --device=eth0 --onboot=on
 services --enabled=network,sshd,rsyslog,iptables
 
 
-# Define how large you want your rootfs to be. 
-# See root-resizefs below.
 part biosboot --fstype=biosboot --size=1 --ondisk sda
 part / --size 1024 --fstype ext4 --ondisk sda
 
@@ -47,10 +45,6 @@ firewalld
 # Basic firewall. If you're going to rely on your cloud service's
 # security groups you can remove this.
 iptables-services
-
-# Grows the filesystem to match the actual device size. You could instead
-# choose the final size above and remove this.
-rootfs-resize
 
 # Some things from @core we can do without in a minimal install
 -biosdevname
@@ -125,9 +119,6 @@ EOF
 # This forces the filesystem to reclaim space from deleted files
 dd bs=1M if=/dev/zero of=/var/tmp/zeros || :
 rm -f /var/tmp/zeros
-
-# This is used by rootfs-resize
-touch /.rootfs-repartition
 
 %end
 
