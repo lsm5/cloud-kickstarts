@@ -1,9 +1,13 @@
 # This is a basic Fedora 18 spin designed to work in OpenStack and other
-# private cloud environments. It's configured with cloud-init so it will
-# take advantage of ec2-compatible metadata services for provisioning
-# ssh keys. That also currently creates an ec2-user account; we'll probably
-# want to make that something generic by default. The root password is empty
-# by default.
+# private cloud environments. This particular kickstart is designed to
+# be as obsessively minimal as we can be and still be Fedora. Because
+# this has not traditionally been a priority, that's not particularly
+# very small, making this in some ways an academic exercise, but it's also
+# a base for the more complete kickstarts.
+#
+# If you're interested in making this more minimal, big problems to solve
+# are the not-needed-for-cloud kernel modules and the gigantic locale
+# database. After that, it's chipping at dependencies.
 
 lang en_US.UTF-8
 keyboard us
