@@ -136,9 +136,14 @@ echo .
 echo "Disabling tmpfs for /tmp."
 systemctl mask tmp.mount
 
-# this is a kludge for an unexpected change in cloud-init. New
-# fedora package coming soon will make this unnecessary.
-sed -i '/system_info:/ a\  default_user: ec2-user' /etc/cloud/cloud.cfg
+# Uncomment this if you want to use cloud init but suppress the creation
+# of an "ec2-user" account. This will, in the absence of further config,
+# cause the ssh key from a metadata source to be put in the root account.
+#cat <<EOF > /etc/cloud/cloud.cfg.d/50_suppress_ec2-user_use_root.cfg
+#users: []
+#disable_root: 0
+#EOF
+
 
 
 echo "Zeroing out empty space."
