@@ -105,11 +105,8 @@ yum -C -y remove linux-firmware
 
 # Remove firewalld; was supposed to be optional in F18, but is required to
 # be present for install/image building.
-echo "Removing firewalld and dependencies"
+echo "Removing firewalld."
 yum -C -y remove firewalld
-# These are all pulled in by firewalld (libselinux-python is too, but
-# is also required by cloud-init).
-yum -C -y remove cairo dbus-glib dbus-python ebtables fontconfig fontpackages-filesystem gobject-introspection js libdrm libpciaccess libpng libwayland-client libwayland-server libX11 libX11-common libXau libxcb libXdamage libXext libXfixes libXrender libXxf86vm mesa-libEGL mesa-libgbm mesa-libGL mesa-libglapi pixman polkit pycairo pygobject2 pygobject3 python-decorator python-slip python-slip-dbus
 
 # Non-firewalld-firewall
 echo -n "Writing static firewall"
@@ -138,6 +135,11 @@ echo .
 # default of having /tmp on tmpfs.
 echo "Disabling tmpfs for /tmp."
 systemctl mask tmp.mount
+
+# this is a kludge for an unexpected change in cloud-init. New
+# fedora package coming soon will make this unnecessary.
+sed -i '/system_info:/ a\  default_user: ec2-user' /etc/cloud/cloud.cfg
+
 
 echo "Zeroing out empty space."
 # This forces the filesystem to reclaim space from deleted files

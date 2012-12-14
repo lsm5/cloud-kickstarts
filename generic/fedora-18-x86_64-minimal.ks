@@ -31,6 +31,7 @@ part / --size 1024 --fstype ext4 --ondisk sda
 
 # Repositories
 repo --name=fedora --mirrorlist=http://mirrors.fedoraproject.org/mirrorlist?repo=fedora-18&arch=$basearch
+#repo --name=fedora-updates --mirrorlist=http://mirrors.fedoraproject.org/mirrorlist?repo=updates-testing-f18&arch=$basearch
 
 
 # Packag list.
@@ -112,7 +113,7 @@ yum -C -y remove linux-firmware
 echo "Removing firewalld and dependencies"
 yum -C -y remove firewalld
 # These are all pulled in by firewalld
-yum -C -y remove cairo dbus-glib dbus-python ebtables fontconfig fontpackages-filesystem gobject-introspection js libdrm libpciaccess libpng libselinux-python libwayland-client libwayland-server libX11 libX11-common libXau libxcb libXdamage libXext libXfixes libXrender libXxf86vm mesa-libEGL mesa-libgbm mesa-libGL mesa-libglapi pixman polkit pycairo pygobject2 pygobject3 python-decorator python-slip python-slip-dbus
+yum -C -y remove cairo dbus-glib dbus-python ebtables gobject-introspection libselinux-python pygobject3-base python-slip python-slip-dbus
 
 # Non-firewalld-firewall
 echo -n "Writing static firewall"

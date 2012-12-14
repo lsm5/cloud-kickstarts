@@ -99,10 +99,8 @@ yum -C -y remove linux-firmware
 
 # Remove firewalld; was supposed to be optional in F18, but is required to
 # be present for install/image building.
-echo "Removing firewalld and dependencies"
+echo "Removing firewalld."
 yum -C -y remove firewalld
-# These are all pulled in by firewalld
-yum -C -y remove cairo dbus-glib dbus-python ebtables fontconfig fontpackages-filesystem gobject-introspection js libdrm libpciaccess libpng libselinux-python libwayland-client libwayland-server libX11 libX11-common libXau libxcb libXdamage libXext libXfixes libXrender libXxf86vm mesa-libEGL mesa-libgbm mesa-libGL mesa-libglapi pixman polkit pycairo pygobject2 pygobject3 python-decorator python-slip python-slip-dbus
 
 # Non-firewalld-firewall
 echo -n "Writing static firewall"
