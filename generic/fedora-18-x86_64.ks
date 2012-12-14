@@ -46,7 +46,6 @@ firewalld
 iptables-services
 
 # cherry-pick a few things from @standard
-logrotate
 tmpwatch
 tar
 rsync
