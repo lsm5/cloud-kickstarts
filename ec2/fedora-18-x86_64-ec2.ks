@@ -1,90 +1,223 @@
-# Build a basic Fedora 18 AMI
+# This is a basic Fedora 18 spin designed to work in OpenStack and other
+# private cloud environments. It's configured with cloud-init so it will
+# take advantage of ec2-compatible metadata services for provisioning
+# ssh keys. That also currently creates an ec2-user account; we'll probably
+# want to make that something generic by default. The root password is empty
+# by default.
+#
+# Note that unlike the standard F18 install, this image has /tmp on disk
+# rather than in tmpfs, since memory is usually at a premium.
+
 lang en_US.UTF-8
 keyboard us
 timezone --utc America/New_York
+
 auth --useshadow --enablemd5
 selinux --enforcing
-firewall --service=ssh
-bootloader --timeout=1 --location=mbr --driveorder=sda
+
+# this is actually not used, but a static firewall
+# matching these rules is generated below.
+firewall --service=ssh --service=http --service=https
+
+bootloader --timeout=0 --location=mbr --driveorder=sda
+
 network --bootproto=dhcp --device=eth0 --onboot=on
-services --enabled=network,sshd,rsyslog
+services --enabled=network,sshd,rsyslog,iptables,cloud-init,cloud-init-local,cloud-config,cloud-final
 
-# By default the root password is emptied
+part biosboot --fstype=biosboot --size=1 --ondisk sda
+part / --size 4096 --fstype ext4 --ondisk sda
 
-#
-# Define how large you want your rootfs to be
-# NOTE: S3-backed AMIs have a limit of 10G
-#
-part / --size 10000 --fstype ext4 --ondisk sda
-
-# This will let fussy, fussy grub2 install, if we
-# decide we want that.
-#part biosboot --fstype=biosboot --size=1 --ondisk sda
-
-
-#
 # Repositories
 repo --name=fedora --mirrorlist=http://mirrors.fedoraproject.org/mirrorlist?repo=fedora-18&arch=$basearch
 
-#
-#
-# Add all the packages after the base packages
-#
+
+# Package list.
 %packages --nobase
 @core
-pciutils
 kernel
-man-db
 
--biosdevname
-
-# package to setup cloudy bits for us
+# cloud-init does magical things with EC2 metadata, including provisioning
+# a user account with ssh keys.
 cloud-init
+
+# Not needed with pv-grub (as in EC2). Would be nice to have
+# something smaller for F19 (syslinux?), but this is what we have now.
+grub2
+
+# Needed initially, but removed below.
+firewalld
+
+# Basic firewall. If you're going to rely on your cloud service's
+# security groups you can remove this.
+iptables-services
+
+# cherry-pick a few things from @standard
+tmpwatch
+tar
+rsync
+
+# Some things from @core we can do without in a minimal install
+-biosdevname
+-plymouth
+-NetworkManager
+-polkit
 
 %end
 
-# more ec2-ify
+
+
 %post --erroronfail
 
-# fstab mounting is different for x86_64 and i386
-cat <<EOL > /etc/fstab
+echo -n "Writing fstab"
+cat <<EOF > /etc/fstab
 LABEL=_/   /         ext4    defaults        1 1
-proc       /proc     proc    defaults        0 0
-sysfs      /sys      sysfs   defaults        0 0
-devpts     /dev/pts  devpts  gid=5,mode=620  0 0
-tmpfs      /dev/shm  tmpfs   defaults        0 0
-EOL
-if [ ! -d /lib64 ] ; then
+EOF
+echo .
 
-cat <<EOL >> /etc/fstab
-/dev/xvda3 swap      swap    defaults        0 0
-EOL
+echo -n "Grub tweaks"
+echo GRUB_TIMEOUT=0 > /etc/default/grub
+sed -i 's/^set timeout=5/set timeout=0/' /boot/grub2/grub.cfg
+sed -i '1i# This file is for use with pv-grub; legacy grub is not installed in this image' /boot/grub2/grub.cfg
+sed -i 's/^timeout=5/timeout=0/' /boot/grub/grub.conf
+# need to file a bug on this one
+sed -i 's/root=.*/root=LABEL=_\//' /boot/grub/grub.conf
+echo .
+echo -n "Linking menu.lst to old-style grub.conf for pv-grub"
+mv /boot/grub/grub.conf /boot/grub/menu.lst
+ln -s /boot/grub/menu.lst /etc/grub.conf
 
-# workaround xen performance issue (bz 651861)
-echo "hwcap 1 nosegneg" > /etc/ld.so.conf.d/libc6-xen.conf
-
-fi
-
-# idle=nomwait is to allow xen images to boot and not try use cpu features that are not supported
-# grub tweaks
-sed -i -e 's/timeout=5/timeout=0/' \
-    -e 's|root=[^ ]\+|root=LABEL=_/  idle=halt|' \
-    -e '/splashimage/d' \
-    /boot/grub/grub.conf
-
-# the firewall rules get saved as .old  without this we end up not being able 
-# ssh in as iptables blocks access
-
-rename -v  .old "" /etc/sysconfig/*old
-
-# symlink grub.conf to menu.lst for use by EC2 pv-grub
-pushd /boot/grub
-ln -s grub.conf menu.lst
-popd
 
 # setup systemd to boot to the right runlevel
-rm /etc/systemd/system/default.target
+echo -n "Setting default runlevel to multiuser text mode"
+rm -f /etc/systemd/system/default.target
 ln -s /lib/systemd/system/multi-user.target /etc/systemd/system/default.target
+echo .
+
+# If you want to remove rsyslog and just use journald, also uncomment this.
+#echo -n "Enabling persistent journal"
+#mkdir /var/log/journal/ 
+#echo .
+
+# this is installed by default but we don't need it in virt
+echo "Removing linux-firmware package."
+yum -C -y remove linux-firmware
+
+# Remove firewalld; was supposed to be optional in F18, but is required to
+# be present for install/image building.
+echo "Removing firewalld."
+yum -C -y remove firewalld
+
+# Non-firewalld-firewall
+echo -n "Writing static firewall"
+cat <<EOF > /etc/sysconfig/iptables
+# Simple static firewall loaded by iptables.service. Replace
+# this with your own custom rules, run lokkit, or switch to 
+# shorewall or firewalld as your needs dictate.
+*filter
+:INPUT ACCEPT [0:0]
+:FORWARD ACCEPT [0:0]
+:OUTPUT ACCEPT [0:0]
+-A INPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+-A INPUT -p icmp -j ACCEPT
+-A INPUT -i lo -j ACCEPT
+-A INPUT -m conntrack --ctstate NEW -m tcp -p tcp --dport 22 -j ACCEPT
+-A INPUT -m conntrack --ctstate NEW -m tcp -p tcp --dport 80 -j ACCEPT
+-A INPUT -m conntrack --ctstate NEW -m tcp -p tcp --dport 443 -j ACCEPT
+-A INPUT -j REJECT --reject-with icmp-host-prohibited
+-A FORWARD -j REJECT --reject-with icmp-host-prohibited
+COMMIT
+EOF
+echo .
+
+# Because memory is scarce resource in most cloud/virt environments,
+# and because this impedes forensics, we are differing from the Fedora
+# default of having /tmp on tmpfs.
+echo "Disabling tmpfs for /tmp."
+systemctl mask tmp.mount
+
+# Uncomment this if you want to use cloud init but suppress the creation
+# of an "ec2-user" account. This will, in the absence of further config,
+# cause the ssh key from a metadata source to be put in the root account.
+#cat <<EOF > /etc/cloud/cloud.cfg.d/50_suppress_ec2-user_use_root.cfg
+#users: []
+#disable_root: 0
+#EOF
+
+# Temporary kludge in case https://bugzilla.redhat.com/show_bug.cgi?id=887363
+# does not make F18 final release.
+if [[ $( rpm -q --qf '%{v}-%{r}' cloud-init) == "0.7.1-1.fc18" ]]; then
+echo "Detected older cloud-init; generating config file now."
+cat <<EOF > /etc/cloud/cloud.cfg
+users:
+ - default
+
+disable_root: 1
+ssh_pwauth:   0
+
+locale_configfile: /etc/sysconfig/i18n
+mount_default_fields: [~, ~, 'auto', 'defaults,nofail', '0', '2']
+resize_rootfs_tmp: /dev
+ssh_deletekeys:   0
+ssh_genkeytypes:  ~
+syslog_fix_perms: ~
+
+cloud_init_modules:
+ - bootcmd
+ - write-files
+ - resizefs
+ - set_hostname
+ - update_hostname
+ - update_etc_hosts
+ - rsyslog
+ - users-groups
+ - ssh
+
+cloud_config_modules:
+ - mounts
+ - locale
+ - set-passwords
+ - timezone
+ - puppet
+ - chef
+ - salt-minion
+ - mcollective
+ - disable-ec2-metadata
+ - runcmd
+
+cloud_final_modules:
+ - rightscale_userdata
+ - scripts-per-once
+ - scripts-per-boot
+ - scripts-per-instance
+ - scripts-user
+ - ssh-authkey-fingerprints
+ - keys-to-console
+ - phone-home
+ - final-message
+
+system_info:
+  default_user:
+    name: ec2-user
+    lock_passwd: true
+    gecos: EC2 user
+    groups: [wheel, adm]
+    sudo: ["ALL=(ALL) NOPASSWD:ALL"]
+    shell: /bin/bash
+  distro: fedora
+  paths:
+    cloud_dir: /var/lib/cloud
+    templates_dir: /etc/cloud/templates
+  ssh_svcname: sshd
+# vim:syntax=yaml
+EOF
+fi
+
+
+echo "Zeroing out empty space."
+# This forces the filesystem to reclaim space from deleted files
+dd bs=1M if=/dev/zero of=/var/tmp/zeros || :
+rm -f /var/tmp/zeros
+echo "(Don't worry -- that out-of-space error was expected.)"
 
 %end
 
