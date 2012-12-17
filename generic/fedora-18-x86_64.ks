@@ -76,9 +76,11 @@ sed -i 's/^timeout=5/timeout=0/' /boot/grub/grub.conf
 # need to file a bug on this one
 sed -i 's/root=.*/root=LABEL=_\//' /boot/grub/grub.conf
 echo .
-echo -n "Linking menu.lst to old-style grub.conf for pv-grub"
-mv /boot/grub/grub.conf /boot/grub/menu.lst
-ln -s /boot/grub/menu.lst /etc/grub.conf
+if ! [[ -e /boot/grub/menu.lst ]]; then
+  echo -n "Linking menu.lst to old-style grub.conf for pv-grub"
+  ln /boot/grub/grub.conf /boot/grub/menu.lst
+  ln -sf /boot/grub/grub.conf /etc/grub.conf
+fi
 
 
 # setup systemd to boot to the right runlevel
