@@ -35,6 +35,7 @@ repo --name=fedora --mirrorlist=http://mirrors.fedoraproject.org/mirrorlist?repo
 pciutils
 kernel
 man-db
+firewalld
 
 -biosdevname
 
@@ -71,11 +72,6 @@ sed -i -e 's/timeout=5/timeout=0/' \
     -e 's|root=[^ ]\+|root=LABEL=_/  idle=halt|' \
     -e '/splashimage/d' \
     /boot/grub/grub.conf
-
-# the firewall rules get saved as .old  without this we end up not being able 
-# ssh in as iptables blocks access
-
-rename -v  .old "" /etc/sysconfig/*old
 
 # symlink grub.conf to menu.lst for use by EC2 pv-grub
 pushd /boot/grub
