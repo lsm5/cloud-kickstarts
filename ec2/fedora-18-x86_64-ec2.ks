@@ -73,7 +73,7 @@ echo GRUB_TIMEOUT=0 > /etc/default/grub
 sed -i '1i# This file is for use with pv-grub; legacy grub is not installed in this image' /boot/grub/grub.conf
 sed -i 's/^timeout=5/timeout=0/' /boot/grub/grub.conf
 # need to file a bug on this one
-sed -i 's/root=.*/root=LABEL=_\/ idle=halt/' /boot/grub/grub.conf
+sed -i 's/root=.*/root=LABEL=_\//' /boot/grub/grub.conf
 echo .
 if ! [[ -e /boot/grub/menu.lst ]]; then
   echo -n "Linking menu.lst to old-style grub.conf for pv-grub"
