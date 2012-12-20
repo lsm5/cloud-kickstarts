@@ -1,81 +1,129 @@
-# Build a basic Fedora 18 AMI
+# This is a basic Fedora 18 spin designed to work in Amazon EC2.
+# It's configured with cloud-init so it will take advantage of
+# ec2-compatible metadata services for provisioning ssh keys. That also
+# currently creates an ec2-user account; we'll probably want to make that
+# something generic by default. The root password is empty by default.
+#
+# Note that unlike the standard F18 install, this image has /tmp on disk
+# rather than in tmpfs, since memory is usually at a premium.
+#
+# It additionally configures _no_ local firewall, in line with EC2
+# recommendations that security groups be used instead.
+
+
+
 lang en_US.UTF-8
 keyboard us
 timezone --utc America/New_York
+
 auth --useshadow --enablemd5
 selinux --enforcing
-firewall --service=ssh
-bootloader --timeout=1 --location=mbr --driveorder=sda
+
+firewall --disabled
+
+bootloader --timeout=0 --location=mbr --driveorder=sda
+
 network --bootproto=dhcp --device=eth0 --onboot=on
-services --enabled=network,sshd,rsyslog
+services --enabled=network,sshd,rsyslog,iptables,cloud-init,cloud-init-local,cloud-config,cloud-final
 
-# By default the root password is emptied
+# This would let fussy grub2 install, but will break in EC2
+#part biosboot --fstype=biosboot --size=1 --ondisk sda
+part / --size 4096 --fstype ext4 --ondisk sda
 
-#
-# Define how large you want your rootfs to be
-# NOTE: S3-backed AMIs have a limit of 10G
-#
-part / --size 10000 --fstype ext4 --ondisk sda
-
-#
 # Repositories
 repo --name=fedora --mirrorlist=http://mirrors.fedoraproject.org/mirrorlist?repo=fedora-18&arch=$basearch
 
-#
-#
-# Add all the packages after the base packages
-#
+
+# Package list.
 %packages --nobase
 @core
-pciutils
 kernel-PAE
-man-db
+
+# cloud-init does magical things with EC2 metadata, including provisioning
+# a user account with ssh keys.
+cloud-init
+
+# Needed initially, but removed below.
 firewalld
 
--biosdevname
+# cherry-pick a few things from @standard
+tmpwatch
+tar
+rsync
 
-# package to setup cloudy bits for us
-cloud-init
+# Some things from @core we can do without in a minimal install
+-biosdevname
+-plymouth
+-NetworkManager
+-polkit
 
 %end
 
-# more ec2-ify
+
+
 %post --erroronfail
 
-# fstab mounting is different for x86_64 and i386
-cat <<EOL > /etc/fstab
+echo -n "Writing fstab"
+cat <<EOF > /etc/fstab
 LABEL=_/   /         ext4    defaults        1 1
-proc       /proc     proc    defaults        0 0
-sysfs      /sys      sysfs   defaults        0 0
-devpts     /dev/pts  devpts  gid=5,mode=620  0 0
-tmpfs      /dev/shm  tmpfs   defaults        0 0
-EOL
-if [ ! -d /lib64 ] ; then
+EOF
+echo .
 
-cat <<EOL >> /etc/fstab
-/dev/xvda3 swap      swap    defaults        0 0
-EOL
-
-# workaround xen performance issue (bz 651861)
-echo "hwcap 1 nosegneg" > /etc/ld.so.conf.d/libc6-xen.conf
-
+echo -n "Grub tweaks"
+echo GRUB_TIMEOUT=0 > /etc/default/grub
+sed -i '1i# This file is for use with pv-grub; legacy grub is not installed in this image' /boot/grub/grub.conf
+sed -i 's/^timeout=5/timeout=0/' /boot/grub/grub.conf
+sed -i 's/^default=1/default=0/' /boot/grub/grub.conf
+sed -i '/splashimage/d' /boot/grub/grub.conf
+# need to file a bug on this one
+sed -i 's/root=.*/root=LABEL=_\//' /boot/grub/grub.conf
+echo .
+if ! [[ -e /boot/grub/menu.lst ]]; then
+  echo -n "Linking menu.lst to old-style grub.conf for pv-grub"
+  ln /boot/grub/grub.conf /boot/grub/menu.lst
+  ln -sf /boot/grub/grub.conf /etc/grub.conf
 fi
 
-# idle=nomwait is to allow xen images to boot and not try use cpu features that are not supported
-# grub tweaks
-sed -i -e 's/timeout=5/timeout=0/' \
-    -e 's|root=[^ ]\+|root=LABEL=_/  idle=halt|' \
-    -e '/splashimage/d' \
-    /boot/grub/grub.conf
-
-# symlink grub.conf to menu.lst for use by EC2 pv-grub
-pushd /boot/grub
-ln -s grub.conf menu.lst
-popd
-
 # setup systemd to boot to the right runlevel
-rm /etc/systemd/system/default.target
+echo -n "Setting default runlevel to multiuser text mode"
+rm -f /etc/systemd/system/default.target
 ln -s /lib/systemd/system/multi-user.target /etc/systemd/system/default.target
+echo .
+
+# If you want to remove rsyslog and just use journald, also uncomment this.
+#echo -n "Enabling persistent journal"
+#mkdir /var/log/journal/ 
+#echo .
+
+# this is installed by default but we don't need it in virt
+echo "Removing linux-firmware package."
+yum -C -y remove linux-firmware
+
+# Remove firewalld; was supposed to be optional in F18, but is required to
+# be present for install/image building.
+echo "Removing firewalld."
+yum -C -y remove firewalld
+
+
+# Because memory is scarce resource in most cloud/virt environments,
+# and because this impedes forensics, we are differing from the Fedora
+# default of having /tmp on tmpfs.
+echo "Disabling tmpfs for /tmp."
+systemctl mask tmp.mount
+
+# Uncomment this if you want to use cloud init but suppress the creation
+# of an "ec2-user" account. This will, in the absence of further config,
+# cause the ssh key from a metadata source to be put in the root account.
+#cat <<EOF > /etc/cloud/cloud.cfg.d/50_suppress_ec2-user_use_root.cfg
+#users: []
+#disable_root: 0
+#EOF
+
+echo "Zeroing out empty space."
+# This forces the filesystem to reclaim space from deleted files
+dd bs=1M if=/dev/zero of=/var/tmp/zeros || :
+rm -f /var/tmp/zeros
+echo "(Don't worry -- that out-of-space error was expected.)"
 
 %end
 
