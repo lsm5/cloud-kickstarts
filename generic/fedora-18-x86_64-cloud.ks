@@ -80,6 +80,7 @@ sed -i 's/^set timeout=5/set timeout=0/' /boot/grub2/grub.cfg
 sed -i '1i# This file is for use with pv-grub; legacy grub is not installed in this image' /boot/grub/grub.conf
 sed -i 's/^timeout=5/timeout=0/' /boot/grub/grub.conf
 sed -i 's/^default=1/default=0/' /boot/grub/grub.conf
+sed -i '/splashimage/d' /boot/grub/grub.conf
 # need to file a bug on this one
 sed -i 's/root=.*/root=LABEL=_\//' /boot/grub/grub.conf
 echo .
