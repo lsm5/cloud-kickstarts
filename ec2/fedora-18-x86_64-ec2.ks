@@ -26,7 +26,7 @@ bootloader --timeout=0 --location=mbr --driveorder=sda
 network --bootproto=dhcp --device=eth0 --onboot=on
 services --enabled=network,sshd,rsyslog,iptables,cloud-init,cloud-init-local,cloud-config,cloud-final
 
-# This would let fussy, fussy grub2 install -- but not needed for EC2.
+# This would let fussy grub2 install, but will break in EC2
 #part biosboot --fstype=biosboot --size=1 --ondisk sda
 part / --size 4096 --fstype ext4 --ondisk sda
 
