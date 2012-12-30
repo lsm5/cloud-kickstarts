@@ -6,11 +6,6 @@
 #
 # Note that unlike the standard F18 install, this image has /tmp on disk
 # rather than in tmpfs, since memory is usually at a premium.
-#
-# It additionally configures _no_ local firewall, in line with EC2
-# recommendations that security groups be used instead.
-
-
 
 lang en_US.UTF-8
 keyboard us
@@ -19,7 +14,9 @@ timezone --utc America/New_York
 auth --useshadow --enablemd5
 selinux --enforcing
 
-firewall --disabled
+# this is actually not used, but a static firewall
+# matching these rules is generated below.
+firewall --service=ssh
 
 bootloader --timeout=0 --location=mbr --driveorder=sda
 
@@ -45,6 +42,10 @@ cloud-init
 
 # Needed initially, but removed below.
 firewalld
+
+# Basic firewall. If you're going to rely on your cloud service's
+# security groups you can remove this.
+iptables-services
 
 # cherry-pick a few things from @standard
 tmpwatch
@@ -104,6 +105,27 @@ yum -C -y remove linux-firmware
 echo "Removing firewalld."
 yum -C -y remove firewalld
 
+# Non-firewalld-firewall
+echo -n "Writing static firewall"
+cat <<EOF > /etc/sysconfig/iptables
+# Simple static firewall loaded by iptables.service. Replace
+# this with your own custom rules, run lokkit, or switch to 
+# shorewall or firewalld as your needs dictate.
+*filter
+:INPUT ACCEPT [0:0]
+:FORWARD ACCEPT [0:0]
+:OUTPUT ACCEPT [0:0]
+-A INPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+-A INPUT -p icmp -j ACCEPT
+-A INPUT -i lo -j ACCEPT
+-A INPUT -m conntrack --ctstate NEW -m tcp -p tcp --dport 22 -j ACCEPT
+#-A INPUT -m conntrack --ctstate NEW -m tcp -p tcp --dport 80 -j ACCEPT
+#-A INPUT -m conntrack --ctstate NEW -m tcp -p tcp --dport 443 -j ACCEPT
+-A INPUT -j REJECT --reject-with icmp-host-prohibited
+-A FORWARD -j REJECT --reject-with icmp-host-prohibited
+COMMIT
+EOF
+echo .
 
 # Because memory is scarce resource in most cloud/virt environments,
 # and because this impedes forensics, we are differing from the Fedora
