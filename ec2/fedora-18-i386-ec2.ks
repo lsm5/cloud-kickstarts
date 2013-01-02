@@ -70,6 +70,9 @@ LABEL=_/   /         ext4    defaults        1 1
 EOF
 echo .
 
+# workaround xen performance issue (bz 651861)
+echo "hwcap 1 nosegneg" > /etc/ld.so.conf.d/libc6-xen.conf
+
 echo -n "Grub tweaks"
 echo GRUB_TIMEOUT=0 > /etc/default/grub
 sed -i '1i# This file is for use with pv-grub; legacy grub is not installed in this image' /boot/grub/grub.conf
