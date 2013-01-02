@@ -25,7 +25,7 @@ services --enabled=network,sshd,rsyslog,iptables,cloud-init,cloud-init-local,clo
 
 # This would let fussy grub2 install, but will break in EC2
 #part biosboot --fstype=biosboot --size=1 --ondisk sda
-part / --size 4096 --fstype ext4 --ondisk sda
+part / --size 10000 --fstype ext4 --ondisk sda
 
 # Repositories
 repo --name=fedora --mirrorlist=http://mirrors.fedoraproject.org/mirrorlist?repo=fedora-18&arch=$basearch

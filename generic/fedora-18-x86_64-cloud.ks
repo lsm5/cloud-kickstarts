@@ -25,7 +25,7 @@ network --bootproto=dhcp --device=eth0 --onboot=on
 services --enabled=network,sshd,rsyslog,iptables,cloud-init,cloud-init-local,cloud-config,cloud-final
 
 part biosboot --fstype=biosboot --size=1 --ondisk sda
-part / --size 4096 --fstype ext4 --ondisk sda
+part / --size 10000 --fstype ext4 --ondisk sda
 
 # Repositories
 repo --name=fedora --mirrorlist=http://mirrors.fedoraproject.org/mirrorlist?repo=fedora-18&arch=$basearch
