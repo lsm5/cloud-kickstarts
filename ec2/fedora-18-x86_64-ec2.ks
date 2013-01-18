@@ -136,6 +136,19 @@ echo .
 echo "Disabling tmpfs for /tmp."
 systemctl mask tmp.mount
 
+# appliance-creator does not make this important file.
+if [ ! -e /etc/sysconfig/kernel ]; then
+echo "Creating /etc/sysconfig/kernel."
+cat <<EOF > /etc/sysconfig/kernel
+# UPDATEDEFAULT specifies if new-kernel-pkg should make
+# new kernels the default
+UPDATEDEFAULT=yes
+
+# DEFAULTKERNEL specifies the default kernel package type
+DEFAULTKERNEL=kernel
+EOF
+fi 
+
 # Uncomment this if you want to use cloud init but suppress the creation
 # of an "ec2-user" account. This will, in the absence of further config,
 # cause the ssh key from a metadata source to be put in the root account.

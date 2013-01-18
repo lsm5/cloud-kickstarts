@@ -146,6 +146,19 @@ echo .
 echo "Disabling tmpfs for /tmp."
 systemctl mask tmp.mount
 
+# appliance-creator does not make this important file.
+if [ ! -e /etc/sysconfig/kernel ]; then
+echo "Creating /etc/sysconfig/kernel."
+cat <<EOF > /etc/sysconfig/kernel
+# UPDATEDEFAULT specifies if new-kernel-pkg should make
+# new kernels the default
+UPDATEDEFAULT=yes
+
+# DEFAULTKERNEL specifies the default kernel package type
+DEFAULTKERNEL=kernel
+EOF
+fi
+
 echo "Zeroing out empty space."
 # This forces the filesystem to reclaim space from deleted files
 dd bs=1M if=/dev/zero of=/var/tmp/zeros || :
