@@ -10,7 +10,7 @@
 
 lang en_US.UTF-8
 keyboard us
-timezone --utc America/New_York
+timezone --utc Etc/UTC
 
 auth --useshadow --enablemd5
 selinux --enforcing
