@@ -24,8 +24,9 @@ bootloader --timeout=1 --location=mbr --driveorder=sda
 network --bootproto=dhcp --device=eth0 --onboot=on
 services --enabled=network,sshd,rsyslog,iptables,cloud-init,cloud-init-local,cloud-config,cloud-final
 
-part biosboot --fstype=biosboot --size=1 --ondisk sda
-part / --size 10000 --fstype ext4 --ondisk sda
+
+part / --size 10000 --fstype ext4
+
 
 # Repositories
 repo --name=fedora --mirrorlist=http://mirrors.fedoraproject.org/mirrorlist?repo=fedora-19&arch=$basearch
@@ -41,9 +42,9 @@ kernel-PAE
 # a user account with ssh keys.
 cloud-init
 
-# Not needed with pv-grub (as in EC2). Would be nice to have
-# something smaller for F19 (syslinux?), but this is what we have now.
-grub2
+# Not needed with pv-grub (as in EC2), and pulled in automatically
+# by anaconda, but appliance-creator needs the hint
+syslinux-extlinux
 
 # Needed initially, but removed below.
 firewalld
