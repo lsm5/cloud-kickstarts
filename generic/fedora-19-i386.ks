@@ -67,27 +67,9 @@ rsync
 
 %post --erroronfail
 
-echo -n "Writing fstab"
-cat <<EOF > /etc/fstab
-LABEL=_/   /         ext4    defaults        1 1
-EOF
-echo .
-
-echo -n "Grub tweaks"
-echo GRUB_TIMEOUT=0 > /etc/default/grub
-sed -i 's/^set timeout=5/set timeout=0/' /boot/grub2/grub.cfg
-sed -i '1i# This file is for use with pv-grub; legacy grub is not installed in this image' /boot/grub/grub.conf
-sed -i 's/^timeout=5/timeout=0/' /boot/grub/grub.conf
-sed -i '/splashimage/d' /boot/grub/grub.conf
-# need to file a bug on this one
-sed -i 's/root=.*/root=LABEL=_\//' /boot/grub/grub.conf
-echo .
-if ! [[ -e /boot/grub/menu.lst ]]; then
-  echo -n "Linking menu.lst to old-style grub.conf for pv-grub"
-  ln /boot/grub/grub.conf /boot/grub/menu.lst
-  ln -sf /boot/grub/grub.conf /etc/grub.conf
-fi
-
+# Kickstart specifies timeout in seconds; syslinux uses 10ths.
+# 0 means wait forever, so instead we'll go with 1.
+sed -i 's/^timeout 10/timeout 1/' /boot/extlinux/extlinux.conf
 
 # setup systemd to boot to the right runlevel
 echo -n "Setting default runlevel to multiuser text mode"
