@@ -20,7 +20,7 @@ selinux --enforcing
 # matching these rules is generated below.
 firewall --service=ssh
 
-bootloader --timeout=0 --location=mbr --driveorder=sda
+bootloader --timeout=1 --location=mbr --driveorder=sda
 
 network --bootproto=dhcp --device=eth0 --onboot=on
 services --enabled=network,sshd,rsyslog,iptables
