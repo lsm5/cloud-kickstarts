@@ -36,6 +36,10 @@ repo --name=fedora-updates --mirrorlist=http://mirrors.fedoraproject.org/mirrorl
 @core
 kernel
 
+# We need this image to be portable; also, rescue mode isn't useful here.
+dracut-nohostonly
+dracut-norescue
+
 # Not needed with pv-grub (as in EC2), and pulled in automatically
 # by anaconda, but appliance-creator needs the hint
 syslinux-extlinux 

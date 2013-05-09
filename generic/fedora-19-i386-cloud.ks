@@ -38,6 +38,10 @@ repo --name=fedora-updates --mirrorlist=http://mirrors.fedoraproject.org/mirrorl
 @core
 kernel-PAE
 
+# We need this image to be portable; also, rescue mode isn't useful here.
+dracut-nohostonly
+dracut-norescue
+
 # cloud-init does magical things with EC2 metadata, including provisioning
 # a user account with ssh keys.
 cloud-init

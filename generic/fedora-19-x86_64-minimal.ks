@@ -45,6 +45,10 @@ kernel
 # by anaconda, but appliance-creator needs the hint
 syslinux-extlinux 
 
+# We need this image to be portable; also, rescue mode isn't useful here.
+dracut-nohostonly
+dracut-norescue
+
 # Needed initially, but removed below.
 firewalld
 
