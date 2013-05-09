@@ -167,6 +167,9 @@ DEFAULTKERNEL=kernel-PAE
 EOF
 fi
 
+# make sure firstboot doesn't start
+echo "RUN_FIRSTBOOT=NO" > /etc/sysconfig/firstboot
+
 # Uncomment this if you want to use cloud init but suppress the creation
 # of an "ec2-user" account. This will, in the absence of further config,
 # cause the ssh key from a metadata source to be put in the root account.

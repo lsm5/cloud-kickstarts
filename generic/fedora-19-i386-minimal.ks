@@ -172,6 +172,9 @@ DEFAULTKERNEL=kernel-PAE
 EOF
 fi
 
+# make sure firstboot doesn't start
+echo "RUN_FIRSTBOOT=NO" > /etc/sysconfig/firstboot
+
 echo "Cleaning old yum repodata."
 yum clean all
 
