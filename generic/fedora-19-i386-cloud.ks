@@ -175,6 +175,9 @@ fi
 #disable_root: 0
 #EOF
 
+echo "Cleaning old yum repodata."
+yum clean all
+
 echo "Zeroing out empty space."
 # This forces the filesystem to reclaim space from deleted files
 dd bs=1M if=/dev/zero of=/var/tmp/zeros || :
