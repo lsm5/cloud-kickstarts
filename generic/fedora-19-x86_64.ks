@@ -90,7 +90,7 @@ yum -C -y remove linux-firmware
 # Remove firewalld; was supposed to be optional in F19, but is required to
 # be present for install/image building.
 echo "Removing firewalld."
-yum -C -y remove firewalld
+yum -C -y remove firewalld --setopt="clean_requirements_on_remove=1"
 
 # Non-firewalld-firewall
 echo -n "Writing static firewall"
