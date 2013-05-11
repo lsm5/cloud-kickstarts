@@ -20,7 +20,7 @@ selinux --enforcing
 # matching these rules is generated below.
 firewall --service=ssh
 
-bootloader --timeout=1 --location=mbr --driveorder=sda
+bootloader --timeout=1 --extlinux
 
 network --bootproto=dhcp --device=eth0 --onboot=on
 services --enabled=network,sshd,rsyslog,iptables
@@ -81,6 +81,9 @@ iptables-services
 # Kickstart specifies timeout in seconds; syslinux uses 10ths.
 # 0 means wait forever, so instead we'll go with 1.
 sed -i 's/^timeout 10/timeout 1/' /boot/extlinux/extlinux.conf
+
+echo "Fixing hardcoded device names from appliance-creator" 
+sed -i 's/\/dev\/.da1/LABEL=_\//' /boot/extlinux/extlinux.conf 
 
 # setup systemd to boot to the right runlevel
 echo -n "Setting default runlevel to multiuser text mode"
