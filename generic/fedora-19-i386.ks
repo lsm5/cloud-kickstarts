@@ -77,9 +77,6 @@ echo .
 # 0 means wait forever, so instead we'll go with 1.
 sed -i 's/^timeout 10/timeout 1/' /boot/extlinux/extlinux.conf
 
-echo "Fixing hardcoded device names from appliance-creator" 
-sed -i 's/\/dev\/.da1/LABEL=_\//' /boot/extlinux/extlinux.conf 
-
 # setup systemd to boot to the right runlevel
 echo -n "Setting default runlevel to multiuser text mode"
 rm -f /etc/systemd/system/default.target
