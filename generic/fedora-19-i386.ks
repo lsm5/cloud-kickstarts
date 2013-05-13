@@ -73,6 +73,9 @@ LABEL=_/   /         ext4    defaults        1 1
 EOF
 echo .
 
+# workaround xen performance issue (bz 651861; see also bz 708406)
+echo "hwcap 1 nosegneg" > /etc/ld.so.conf.d/libc6-xen.conf
+
 # Kickstart specifies timeout in seconds; syslinux uses 10ths.
 # 0 means wait forever, so instead we'll go with 1.
 sed -i 's/^timeout 10/timeout 1/' /boot/extlinux/extlinux.conf
