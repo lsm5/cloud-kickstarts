@@ -7,6 +7,10 @@
 #
 # Note that unlike the standard F19 install, this image has /tmp on disk
 # rather than in tmpfs, since memory is usually at a premium.
+#
+# This kickstart file is designed to be used with appliance-creator and
+# may need slight modification for use with actual anaconda or other tools.
+# We intend to target anaconda-in-a-vm style image building for F20.
 
 lang en_US.UTF-8
 keyboard us

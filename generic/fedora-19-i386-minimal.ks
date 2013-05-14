@@ -8,6 +8,10 @@
 # If you're interested in making this more minimal, big problems to solve
 # are the not-needed-for-cloud kernel modules and the gigantic locale
 # database. After that, it's chipping at dependencies.
+#
+# This kickstart file is designed to be used with appliance-creator and
+# may need slight modification for use with actual anaconda or other tools.
+# We intend to target anaconda-in-a-vm style image building for F20.
 
 lang en_US.UTF-8
 keyboard us

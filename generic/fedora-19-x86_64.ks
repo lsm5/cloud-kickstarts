@@ -2,6 +2,10 @@
 # private cloud environments. This flavor isn't configured with cloud-init
 # or any other metadata service; you'll need your own say of getting
 # user (or root) credentials on the system.
+#
+# This kickstart file is designed to be used with appliance-creator and
+# may need slight modification for use with actual anaconda or other tools.
+# We intend to target anaconda-in-a-vm style image building for F20.
 
 lang en_US.UTF-8
 keyboard us
