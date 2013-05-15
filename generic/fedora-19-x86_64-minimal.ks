@@ -65,6 +65,7 @@ iptables-services
 -plymouth
 -NetworkManager
 -polkit
+-iprutils
 
 # These are "leaf" packages which can be done without in an ultra-minimal
 # install, but which actually remove typical functionality

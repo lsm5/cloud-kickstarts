@@ -65,6 +65,7 @@ rsync
 -plymouth
 -NetworkManager
 -polkit
+-iprutils
 
 %end
 
