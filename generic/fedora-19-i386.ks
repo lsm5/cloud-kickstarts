@@ -63,7 +63,6 @@ rsync
 -biosdevname
 -plymouth
 -NetworkManager
--polkit
 -iprutils
 
 %end

@@ -64,7 +64,6 @@ iptables-services
 -biosdevname
 -plymouth
 -NetworkManager
--polkit
 -iprutils
 
 # These are "leaf" packages which can be done without in an ultra-minimal
@@ -74,6 +73,7 @@ iptables-services
 -rsyslog
 -parted
 -openssh-clients
+-polkit
 -rootfiles
 -sendmail
 -sudo
