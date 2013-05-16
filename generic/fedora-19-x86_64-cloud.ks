@@ -77,12 +77,6 @@ rsync
 
 %post --erroronfail
 
-echo -n "Writing fstab"
-cat <<EOF > /etc/fstab
-LABEL=_/   /         ext4    defaults        1 1
-EOF
-echo .
-
 # Kickstart specifies timeout in seconds; syslinux uses 10ths.
 # 0 means wait forever, so instead we'll go with 1.
 sed -i 's/^timeout 10/timeout 1/' /boot/extlinux/extlinux.conf
