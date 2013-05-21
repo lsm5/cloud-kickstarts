@@ -80,7 +80,7 @@ sed -i 's/root=.*/root=LABEL=_\//' /boot/grub/grub.conf
 echo .
 if ! [[ -e /boot/grub/menu.lst ]]; then
   echo -n "Linking menu.lst to old-style grub.conf for pv-grub"
-  ln /boot/grub/grub.conf /boot/grub/menu.lst
+  ln -s grub.conf /boot/grub/menu.lst
   ln -sf /boot/grub/grub.conf /etc/grub.conf
 fi
 
