@@ -102,6 +102,19 @@ pushd /boot/grub
 ln -s grub.conf menu.lst
 popd
 
+# appliance-creator does not make this important file.
+if [ ! -e /etc/sysconfig/kernel ]; then
+echo "Creating /etc/sysconfig/kernel."
+cat <<EOF > /etc/sysconfig/kernel
+# UPDATEDEFAULT specifies if new-kernel-pkg should make
+# new kernels the default
+UPDATEDEFAULT=yes
+
+# DEFAULTKERNEL specifies the default kernel package type
+DEFAULTKERNEL=kernel-PAE
+EOF
+fi
+
 # setup systemd to boot to the right runlevel
 rm /etc/systemd/system/default.target
 ln -s /lib/systemd/system/multi-user.target /etc/systemd/system/default.target
