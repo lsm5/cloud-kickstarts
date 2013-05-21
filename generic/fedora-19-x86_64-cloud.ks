@@ -79,7 +79,7 @@ rsync
 #link grub.conf to menu.lst for ec2 to work
 if ! [[ -e /boot/grub/menu.lst ]]; then
   echo -n "Linking menu.lst to old-style grub.conf for pv-grub"
-  ln -s /boot/grub/grub.conf /boot/grub/menu.lst
+  ln -s grub.conf /boot/grub/menu.lst
   ln -sf /boot/grub/grub.conf /etc/grub.conf
 fi
 
