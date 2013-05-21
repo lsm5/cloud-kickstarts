@@ -23,7 +23,7 @@ selinux --enforcing
 # matching these rules is generated below.
 firewall --service=ssh
 
-bootloader --timeout=1 --extlinux
+bootloader --timeout=1 extlinux
 
 network --bootproto=dhcp --device=eth0 --onboot=on
 services --enabled=network,sshd,rsyslog,iptables,cloud-init,cloud-init-local,cloud-config,cloud-final
@@ -76,6 +76,12 @@ rsync
 
 
 %post --erroronfail
+#link grub.conf to menu.lst for ec2 to work
+if ! [[ -e /boot/grub/menu.lst ]]; then
+  echo -n "Linking menu.lst to old-style grub.conf for pv-grub"
+  ln -s /boot/grub/grub.conf /boot/grub/menu.lst
+  ln -sf /boot/grub/grub.conf /etc/grub.conf
+fi
 
 # Kickstart specifies timeout in seconds; syslinux uses 10ths.
 # 0 means wait forever, so instead we'll go with 1.
