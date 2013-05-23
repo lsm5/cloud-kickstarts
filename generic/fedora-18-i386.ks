@@ -9,6 +9,7 @@ timezone --utc America/New_York
 
 auth --useshadow --enablemd5
 selinux --enforcing
+rootpw --lock
 
 # this is actually not used, but a static firewall
 # matching these rules is generated below.
@@ -68,6 +69,10 @@ cat <<EOF > /etc/fstab
 LABEL=_/   /         ext4    defaults        1 1
 EOF
 echo .
+
+# older versions of livecd-tools do not follow rootpw --lock line above
+# https://bugzilla.redhat.com/show_bug.cgi?id=964299
+passwd -l root
 
 echo -n "Grub tweaks"
 echo GRUB_TIMEOUT=0 > /etc/default/grub

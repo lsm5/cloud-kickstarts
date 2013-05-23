@@ -4,6 +4,7 @@ keyboard us
 timezone --utc America/New_York
 auth --useshadow --enablemd5
 selinux --enforcing
+rootpw --lock
 firewall --service=ssh
 bootloader --timeout=1 --location=mbr --driveorder=sda
 network --bootproto=dhcp --device=eth0 --onboot=on
@@ -61,6 +62,10 @@ cloud-init
 
 # more ec2-ify
 %post --erroronfail
+
+# older versions of livecd-tools do not follow rootpw --lock line above
+# https://bugzilla.redhat.com/show_bug.cgi?id=964299
+passwd -l root
 
 # create ec2-user
 /usr/sbin/useradd ec2-user

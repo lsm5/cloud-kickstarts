@@ -13,6 +13,7 @@ timezone --utc Etc/UTC
 
 auth --useshadow --enablemd5
 selinux --enforcing
+rootpw --lock
 
 # this is actually not used, but a static firewall
 # matching these rules is generated below.
@@ -70,6 +71,10 @@ rsync
 
 
 %post --erroronfail
+
+# older versions of livecd-tools do not follow rootpw --lock line above
+# https://bugzilla.redhat.com/show_bug.cgi?id=964299
+passwd -l root
 
 # Kickstart specifies timeout in seconds; syslinux uses 10ths.
 # 0 means wait forever, so instead we'll go with 1.

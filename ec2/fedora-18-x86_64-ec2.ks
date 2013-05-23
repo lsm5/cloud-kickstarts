@@ -1,8 +1,8 @@
-# This is a basic Fedora 18 spin designed to work in Amazon EC2.
-# It's configured with cloud-init so it will take advantage of
-# ec2-compatible metadata services for provisioning ssh keys. That also
-# currently creates an ec2-user account; we'll probably want to make that
-# something generic by default. The root password is empty by default.
+# This is a basic Fedora 18 spin designed to work in Amazon EC2. It's
+# configured with cloud-init so it will take advantage of ec2-compatible
+# metadata services for provisioning ssh keys. That also currently creates
+# an ec2-user account; we'll probably want to make that something generic by
+# default. The root password is empty and locked by default.
 #
 # Note that unlike the standard F18 install, this image has /tmp on disk
 # rather than in tmpfs, since memory is usually at a premium.
@@ -13,6 +13,7 @@ timezone --utc America/New_York
 
 auth --useshadow --enablemd5
 selinux --enforcing
+rootpw --lock
 
 # this is actually not used, but a static firewall
 # matching these rules is generated below.
@@ -69,6 +70,10 @@ cat <<EOF > /etc/fstab
 LABEL=_/   /         ext4    defaults        1 1
 EOF
 echo .
+
+# older versions of livecd-tools do not follow rootpw --lock line above
+# https://bugzilla.redhat.com/show_bug.cgi?id=964299
+passwd -l root
 
 # workaround xen performance issue (bz 651861)
 echo "hwcap 1 nosegneg" > /etc/ld.so.conf.d/libc6-xen.conf
