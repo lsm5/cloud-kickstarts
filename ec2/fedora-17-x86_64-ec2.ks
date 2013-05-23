@@ -4,7 +4,7 @@ keyboard us
 timezone --utc America/New_York
 auth --useshadow --enablemd5
 selinux --enforcing
-rootpw --lock
+# root password blank but locked below
 firewall --service=ssh
 bootloader --timeout=1 --location=mbr --driveorder=sda
 network --bootproto=dhcp --device=eth0 --onboot=on
