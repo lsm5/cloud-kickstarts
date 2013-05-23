@@ -40,7 +40,7 @@ repo --name=fedora --mirrorlist=http://mirrors.fedoraproject.org/mirrorlist?repo
 repo --name=fedora-updates --mirrorlist=http://mirrors.fedoraproject.org/mirrorlist?repo=updates-released-f19&arch=$basearch 
 
 
-# Packag list.
+# Package list.
 # "Obsessively minimal as we can reasonably get and still be Fedora."
 %packages --nobase
 @core
@@ -85,7 +85,7 @@ iptables-services
 
 %post --erroronfail
 
-# older versions of livecd-tools do not follow rootpw --lock line above
+# older versions of livecd-tools do not follow "rootpw --lock" line above
 # https://bugzilla.redhat.com/show_bug.cgi?id=964299
 passwd -l root
 

@@ -74,7 +74,7 @@ rsync
 # workaround xen performance issue (bz 651861; see also bz 708406)
 echo "hwcap 1 nosegneg" > /etc/ld.so.conf.d/libc6-xen.conf
 
-# older versions of livecd-tools do not follow rootpw --lock line above
+# older versions of livecd-tools do not follow "rootpw --lock" line above
 # https://bugzilla.redhat.com/show_bug.cgi?id=964299
 passwd -l root
 

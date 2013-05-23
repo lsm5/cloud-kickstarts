@@ -77,6 +77,7 @@ rsync
 
 
 %post --erroronfail
+
 #link grub.conf to menu.lst for ec2 to work
 if ! [[ -e /boot/grub/menu.lst ]]; then
   echo -n "Linking menu.lst to old-style grub.conf for pv-grub"
@@ -84,7 +85,7 @@ if ! [[ -e /boot/grub/menu.lst ]]; then
   ln -sf /boot/grub/grub.conf /etc/grub.conf
 fi
 
-# older versions of livecd-tools do not follow rootpw --lock line above
+# older versions of livecd-tools do not follow "rootpw --lock" line above
 # https://bugzilla.redhat.com/show_bug.cgi?id=964299
 passwd -l root
 

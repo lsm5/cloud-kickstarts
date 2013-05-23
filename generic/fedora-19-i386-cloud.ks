@@ -77,6 +77,7 @@ rsync
 
 
 %post --erroronfail
+
 #link grub.conf to menu.lst for ec2 to work
 if ! [[ -e /boot/grub/menu.lst ]]; then
   echo -n "Linking menu.lst to old-style grub.conf for pv-grub"
@@ -87,7 +88,7 @@ fi
 # workaround xen performance issue (bz 651861; see also bz 708406)
 echo "hwcap 1 nosegneg" > /etc/ld.so.conf.d/libc6-xen.conf
 
-# older versions of livecd-tools do not follow rootpw --lock line above
+# older versions of livecd-tools do not follow "rootpw --lock" line above
 # https://bugzilla.redhat.com/show_bug.cgi?id=964299
 passwd -l root
 

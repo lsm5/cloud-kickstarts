@@ -72,7 +72,7 @@ rsync
 
 %post --erroronfail
 
-# older versions of livecd-tools do not follow rootpw --lock line above
+# older versions of livecd-tools do not follow "rootpw --lock" line above
 # https://bugzilla.redhat.com/show_bug.cgi?id=964299
 passwd -l root
 

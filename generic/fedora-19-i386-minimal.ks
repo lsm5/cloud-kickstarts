@@ -39,7 +39,7 @@ repo --name=fedora --mirrorlist=http://mirrors.fedoraproject.org/mirrorlist?repo
 repo --name=fedora-updates --mirrorlist=http://mirrors.fedoraproject.org/mirrorlist?repo=updates-released-f19&arch=$basearch 
 
 
-# Packag list.
+# Package list.
 # "Obsessively minimal as we can reasonably get and still be Fedora."
 %packages --nobase
 @core
@@ -87,7 +87,7 @@ iptables-services
 # workaround xen performance issue (bz 651861; see also bz 708406)
 echo "hwcap 1 nosegneg" > /etc/ld.so.conf.d/libc6-xen.conf
 
-# older versions of livecd-tools do not follow rootpw --lock line above
+# older versions of livecd-tools do not follow "rootpw --lock" line above
 # https://bugzilla.redhat.com/show_bug.cgi?id=964299
 passwd -l root
 
