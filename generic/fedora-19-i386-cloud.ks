@@ -51,6 +51,11 @@ dracut-norescue
 # a user account with ssh keys.
 cloud-init
 
+# need this for growpart, because parted doesn't yet support resizepart
+# https://bugzilla.redhat.com/show_bug.cgi?id=966993
+cloud-utils
+
+
 # Not needed with pv-grub (as in EC2), and pulled in automatically
 # by anaconda, but appliance-creator needs the hint
 syslinux-extlinux
