@@ -30,7 +30,7 @@ network --bootproto=dhcp --device=eth0 --onboot=on
 services --enabled=network,sshd,rsyslog,iptables,cloud-init,cloud-init-local,cloud-config,cloud-final
 
 
-part / --size 10000 --fstype ext4
+part / --size 2048 --fstype ext4
 
 
 # Repositories
