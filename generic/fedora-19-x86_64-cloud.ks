@@ -24,7 +24,7 @@ rootpw --lock
 # matching these rules is generated below.
 firewall --service=ssh
 
-bootloader --timeout=1 --append="console=ttyS0" extlinux
+bootloader --timeout=1 --append="console=tty0 console=ttyS0" extlinux
 
 network --bootproto=dhcp --device=eth0 --onboot=on
 services --enabled=network,sshd,rsyslog,iptables,cloud-init,cloud-init-local,cloud-config,cloud-final
