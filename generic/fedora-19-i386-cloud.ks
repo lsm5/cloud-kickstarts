@@ -193,6 +193,11 @@ fi
 # make sure firstboot doesn't start
 echo "RUN_FIRSTBOOT=NO" > /etc/sysconfig/firstboot
 
+# workaround https://bugzilla.redhat.com/show_bug.cgi?id=966888
+if ! grep -q growpart /etc/cloud/cloud.cfg; then
+  sed -i 's/ - resizefs/ - growpart\n - resizefs/' /etc/cloud/cloud.cfg
+fi
+
 # Uncomment this if you want to use cloud init but suppress the creation
 # of an "ec2-user" account. This will, in the absence of further config,
 # cause the ssh key from a metadata source to be put in the root account.
