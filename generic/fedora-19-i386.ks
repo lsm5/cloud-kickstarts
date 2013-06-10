@@ -129,6 +129,7 @@ echo -n "Network fixes"
 # initscripts don't like this file to be missing.
 cat > /etc/sysconfig/network << EOF
 NETWORKING=yes
+NOZEROCONF=yes
 EOF
 
 # For cloud images, 'eth0' _is_ the predictable device name, since
