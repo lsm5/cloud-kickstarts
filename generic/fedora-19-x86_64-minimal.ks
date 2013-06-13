@@ -19,7 +19,7 @@ timezone --utc Etc/UTC
 
 auth --useshadow --enablemd5
 selinux --enforcing
-rootpw --lock
+rootpw --lock --iscrypted locked
 
 # this is actually not used, but a static firewall
 # matching these rules is generated below.
