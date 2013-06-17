@@ -24,7 +24,7 @@ rootpw --lock --iscrypted locked
 # matching these rules is generated below.
 firewall --service=ssh
 
-bootloader --timeout=1 --append="serial=tty0 console=tty1 console=ttyS0,115200n8 console=hvc0" extlinux
+bootloader --timeout=1 --append="serial=tty0 console=ttyS0,115200n8 console=hvc0 console=tty1" extlinux
 
 network --bootproto=dhcp --device=eth0 --onboot=on
 services --enabled=network,sshd,rsyslog,iptables,cloud-init,cloud-init-local,cloud-config,cloud-final
@@ -143,6 +143,12 @@ COMMIT
 EOF
 echo .
 
+echo -n "Getty fixes"
+# although we want console output going to the serial console, we don't
+# actually have the opportunity to login there. FIX.
+# we don't really need to auto-spawn _any_ gettys.
+sed -i '/^#NAutoVTs=.*/ a\
+NAutoVTs=0' /etc/systemd/logind.conf
 
 echo -n "Network fixes"
 # initscripts don't like this file to be missing.
