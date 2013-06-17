@@ -210,6 +210,10 @@ fi
 #disable_root: 0
 #EOF
 
+# This is a temporary fix to change the default user to "fedora"; this
+# change is pending in an f19 update to the cloud-utils pakcage
+sed -i 's/ec2-user/fedora/;s/EC2 user/Fedora Cloud User/' /etc/cloud/cloud.cfg
+
 echo "Cleaning old yum repodata."
 yum clean all
 
