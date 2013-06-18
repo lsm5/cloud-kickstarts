@@ -86,10 +86,10 @@ rm -f /etc/systemd/system/default.target
 ln -s /lib/systemd/system/multi-user.target /etc/systemd/system/default.target
 echo .
 
-# If you want to remove rsyslog and just use journald, also uncomment this.
-#echo -n "Enabling persistent journal"
-#mkdir /var/log/journal/ 
-#echo .
+# If you want to remove rsyslog and just use journald, remove this!
+echo -n "Disabling persistent journal"
+rmdir /var/log/journal/ 
+echo . 
 
 # this is installed by default but we don't need it in virt
 echo "Removing linux-firmware package."

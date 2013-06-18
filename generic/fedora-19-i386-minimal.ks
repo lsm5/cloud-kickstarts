@@ -101,11 +101,6 @@ rm -f /etc/systemd/system/default.target
 ln -s /lib/systemd/system/multi-user.target /etc/systemd/system/default.target
 echo .
 
-# because we didn't install rsyslog, enable persistent journal
-echo -n "Enabling persistent journal"
-mkdir /var/log/journal/ 
-echo .
-
 # this is installed by default but we don't need it in virt
 echo "Removing linux-firmware package."
 yum -C -y remove linux-firmware
