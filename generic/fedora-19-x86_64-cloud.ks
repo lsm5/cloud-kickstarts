@@ -216,6 +216,7 @@ sed -i 's/ec2-user/fedora/;s/EC2 user/Fedora Cloud User/' /etc/cloud/cloud.cfg
 
 echo "Cleaning old yum repodata."
 yum clean all
+truncate -c -s 0 /var/log/yum.log
 
 echo "Zeroing out empty space with fstrim."
 /usr/sbin/fstrim /
