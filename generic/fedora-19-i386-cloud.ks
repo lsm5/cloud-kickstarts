@@ -1,9 +1,8 @@
 # This is a basic Fedora 19 spin designed to work in OpenStack and other
 # private cloud environments. It's configured with cloud-init so it will
-# take advantage of ec2-compatible metadata services for provisioning
-# ssh keys. That also currently creates an ec2-user account; we'll probably
-# want to make that something generic by default. The root password is empty
-# and locked by default.
+# take advantage of ec2-compatible metadata services for provisioning ssh
+# keys. Cloud-init creates a user account named "fedora" with passwordless
+# sudo access. The root password is empty and locked by default.
 #
 # Note that unlike the standard F19 install, this image has /tmp on disk
 # rather than in tmpfs, since memory is usually at a premium.
