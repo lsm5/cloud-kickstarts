@@ -23,7 +23,7 @@ rootpw --lock --iscrypted locked
 # matching these rules is generated below.
 firewall --service=ssh
 
-bootloader --timeout=1 --append="serial=tty0 console=ttyS0,115200n8 console=hvc0 console=tty1" extlinux
+bootloader --timeout=1 --append="console=ttyS0,115200n8 console=hvc0 console=tty0" extlinux
 
 network --bootproto=dhcp --device=eth0 --onboot=on
 services --enabled=network,sshd,rsyslog,iptables,cloud-init,cloud-init-local,cloud-config,cloud-final
