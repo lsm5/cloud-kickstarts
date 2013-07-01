@@ -134,6 +134,10 @@ COMMIT
 EOF
 echo .
 
+# Another one needed at install time but not after that, and it pulls
+# in some unneeded deps (like, newt and slang)
+echo "Removing authconfig."
+yum -C -y remove authconfig --setopt="clean_requirements_on_remove=1"
 
 echo -n "Network fixes"
 # initscripts don't like this file to be missing.

@@ -144,6 +144,11 @@ COMMIT
 EOF
 echo .
 
+# Another one needed at install time but not after that, and it pulls
+# in some unneeded deps (like, newt and slang)
+echo "Removing authconfig."
+yum -C -y remove authconfig --setopt="clean_requirements_on_remove=1"
+
 echo -n "Getty fixes"
 # although we want console output going to the serial console, we don't
 # actually have the opportunity to login there. FIX.
