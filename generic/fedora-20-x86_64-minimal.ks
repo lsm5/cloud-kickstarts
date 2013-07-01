@@ -45,6 +45,7 @@ repo --name=fedora --mirrorlist=http://mirrors.fedoraproject.org/mirrorlist?repo
 # "Obsessively minimal as we can reasonably get and still be Fedora."
 %packages --nobase
 @core
+grubby
 kernel
 
 # Not needed with pv-grub (as in EC2), and pulled in automatically

@@ -41,6 +41,7 @@ repo --name=fedora --mirrorlist=http://mirrors.fedoraproject.org/mirrorlist?repo
 # Package list.
 %packages --nobase
 @core
+grubby
 kernel
 
 # cloud-init does magical things with EC2 metadata, including provisioning

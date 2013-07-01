@@ -44,6 +44,7 @@ repo --name=fedora --mirrorlist=http://mirrors.fedoraproject.org/mirrorlist?repo
 # "Obsessively minimal as we can reasonably get and still be Fedora."
 %packages --nobase
 @core
+grubby
 kernel-PAE
 
 # We need this image to be portable; also, rescue mode isn't useful here.
