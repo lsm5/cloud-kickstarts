@@ -77,6 +77,7 @@ rsync
 -plymouth
 -NetworkManager
 -iprutils
+-kbd
 
 %end
 
