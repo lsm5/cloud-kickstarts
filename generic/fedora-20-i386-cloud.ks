@@ -53,7 +53,7 @@ cloud-init
 
 # need this for growpart, because parted doesn't yet support resizepart
 # https://bugzilla.redhat.com/show_bug.cgi?id=966993
-cloud-utils
+cloud-utils-growpart
 
 
 # Not needed with pv-grub (as in EC2), and pulled in automatically
