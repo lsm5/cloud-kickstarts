@@ -224,6 +224,9 @@ fi
 # change will be in an upcoming cloud-init update
 sed -i 's/ec2-user/fedora/;s/EC2 user/Fedora Cloud User/' /etc/cloud/cloud.cfg
 
+echo "Removing random-seed so it's not the same in every image."
+rm -f /var/lib/random-seed
+
 echo "Cleaning old yum repodata."
 yum clean all
 truncate -c -s 0 /var/log/yum.log

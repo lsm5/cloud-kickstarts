@@ -189,6 +189,9 @@ fi
 # make sure firstboot doesn't start
 echo "RUN_FIRSTBOOT=NO" > /etc/sysconfig/firstboot
 
+echo "Removing random-seed so it's not the same in every image."
+rm -f /var/lib/random-seed
+
 echo "Cleaning old yum repodata."
 yum clean all
 truncate -c -s 0 /var/log/yum.log
