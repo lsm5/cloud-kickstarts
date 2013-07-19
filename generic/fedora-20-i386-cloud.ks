@@ -45,8 +45,8 @@ grubby
 kernel-PAE
 
 # We need this image to be portable; also, rescue mode isn't useful here.
-dracut-nohostonly
-dracut-norescue
+dracut-config-generic
+-dracut-config-rescue
 
 # cloud-init does magical things with EC2 metadata, including provisioning
 # a user account with ssh keys.

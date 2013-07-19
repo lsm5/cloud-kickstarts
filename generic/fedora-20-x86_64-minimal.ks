@@ -53,8 +53,8 @@ kernel
 syslinux-extlinux 
 
 # We need this image to be portable; also, rescue mode isn't useful here.
-dracut-nohostonly
-dracut-norescue
+dracut-config-generic
+-dracut-config-rescue
 
 # Needed initially, but removed below.
 firewalld
