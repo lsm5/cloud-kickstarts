@@ -228,6 +228,9 @@ echo "Cleaning old yum repodata."
 yum clean all
 truncate -c -s 0 /var/log/yum.log
 
+echo "Fixing SELinux contexts."
+/usr/sbin/fixfiles -R -a restore
+
 echo "Zeroing out empty space."
 # This forces the filesystem to reclaim space from deleted files
 dd bs=1M if=/dev/zero of=/var/tmp/zeros || :
