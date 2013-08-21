@@ -87,12 +87,26 @@ rsync
 
 %post --erroronfail
 
-#link grub.conf to menu.lst for ec2 to work
-if [[ -e /boot/grub/grub.conf ]]; then
-  echo -n "Linking menu.lst to old-style grub.conf for pv-grub"
-  ln -sf grub.conf /boot/grub/menu.lst
-  ln -sf /boot/grub/grub.conf /etc/grub.conf
+# Create grub.conf for EC2.
+if [[ ! -e /boot/grub/grub.conf ]]; then
+  echo -n "Creating grub.conf for pvgrub"
+  rootuuid=$( awk '$2=="/" { print $1 };'  /etc/fstab )
+  mkdir /boot/grub
+  echo -e 'default=0\ntimeout=0\n\n' > /boot/grub/grub.conf
+  for kv in $( ls -1v /boot/vmlinuz* |grep -v rescue |sed s/.*vmlinuz-//  ); do
+    echo "title Fedora ($kv)" >> /boot/grub/grub.conf
+    echo -e "\troot (hd0)" >> /boot/grub/grub.conf
+    echo -e "\tkernel /boot/vmlinuz-$kv ro root=$rootuuid console=hvc0 LANG=en_US.UTF-8" >> /boot/grub/grub.conf
+    echo -e "\tinitrd /boot/initramfs-$kv.img" >> /boot/grub/grub.conf
+    echo
+  done
 fi
+
+
+#link grub.conf to menu.lst for ec2 to work
+echo -n "Linking menu.lst to old-style grub.conf for pv-grub"
+ln -sf grub.conf /boot/grub/menu.lst
+ln -sf /boot/grub/grub.conf /etc/grub.conf
 
 # older versions of livecd-tools do not follow "rootpw --lock" line above
 # https://bugzilla.redhat.com/show_bug.cgi?id=964299
