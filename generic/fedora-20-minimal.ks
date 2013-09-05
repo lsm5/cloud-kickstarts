@@ -200,7 +200,7 @@ echo "Compressing cracklib."
 gzip -9 /usr/share/cracklib/pw_dict.pwd
 
 echo "Minimizing locale-archive."
-localedef --list-archive | grep -v en_US | xargs localedef --prefix $ROOT --delete-from-archive
+localedef --list-archive | grep -v en_US | xargs localedef --delete-from-archive
 mv /usr/lib/locale/locale-archive /usr/lib/locale/locale-archive.tmpl
 /usr/sbin/build-locale-archive
 
