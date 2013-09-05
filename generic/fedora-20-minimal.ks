@@ -46,7 +46,7 @@ reboot
 
 # Package list.
 # "Obsessively minimal as we can reasonably get and still be Fedora."
-%packages --nobase --excludedocs
+%packages --excludedocs
 @core
 grubby
 kernel

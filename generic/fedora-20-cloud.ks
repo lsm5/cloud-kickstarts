@@ -42,7 +42,7 @@ repo --name=fedora --mirrorlist=http://mirrors.fedoraproject.org/mirrorlist?repo
 reboot
 
 # Package list.
-%packages --nobase
+%packages
 @core
 grubby
 kernel

@@ -42,7 +42,7 @@ reboot
 # Package list.
 # Just the basics, here.
 
-%packages --nobase
+%packages
 @core
 grubby
 kernel
