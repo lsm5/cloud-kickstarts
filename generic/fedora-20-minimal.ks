@@ -46,7 +46,7 @@ reboot
 
 # Package list.
 # "Obsessively minimal as we can reasonably get and still be Fedora."
-%packages --nobase
+%packages --nobase --excludedocs
 @core
 grubby
 kernel
@@ -194,6 +194,15 @@ echo "RUN_FIRSTBOOT=NO" > /etc/sysconfig/firstboot
 
 echo "Removing random-seed so it's not the same in every image."
 rm -f /var/lib/random-seed
+
+
+echo "Compressing cracklib."
+gzip -9 /usr/share/cracklib/pw_dict.pwd
+
+echo "Minimizing locale-archive."
+localedef --list-archive | grep -v en_US | xargs localedef --prefix $ROOT --delete-from-archive
+mv /usr/lib/locale/locale-archive /usr/lib/locale/locale-archive.tmpl
+/usr/sbin/build-locale-archive
 
 echo "Cleaning old yum repodata."
 yum clean all
