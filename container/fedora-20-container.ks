@@ -40,6 +40,8 @@ yum
 # removed below
 findutils
 passwd
+# https://bugzilla.redhat.com/show_bug.cgi?id=1004976
+firewalld
 
 %end
 
@@ -103,6 +105,7 @@ mv /usr/lib/locale/locale-archive /usr/lib/locale/locale-archive.tmpl
 echo "Removing extra packages."
 yum -C -y remove passwd --setopt="clean_requirements_on_remove=1"
 yum -C -y remove findutils --setopt="clean_requirements_on_remove=1"
+yum -C -y remove firewalld --setopt="clean_requirements_on_remove=1"
 
 
 echo "Cleaning old yum repodata."
