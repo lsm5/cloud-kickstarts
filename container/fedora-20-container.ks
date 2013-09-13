@@ -7,7 +7,8 @@
 #
 # This kickstart file is designed to be used with appliance-creator and
 # may need slight modification for use with actual anaconda or other tools.
-# We intend to target anaconda-in-a-vm style image building for F20.
+# We intend to target anaconda-in-a-vm style image building for F20, but
+# not necessarily for containers -- that's yet to be worked out.
 
 lang en_US.UTF-8
 keyboard us
@@ -22,10 +23,8 @@ clearpart --all
 part / --size 1024 --fstype ext4
 
 # Repositories
-#repo --name=fedora --mirrorlist=http://mirrors.fedoraproject.org/mirrorlist?repo=fedora-20&arch=$basearch
-#repo --name=fedora-updates --mirrorlist=http://mirrors.fedoraproject.org/mirrorlist?repo=updates-released-f20&arch=$basearch
-repo --name=fedora --mirrorlist=http://mirrors.fedoraproject.org/mirrorlist?repo=rawhide&arch=$basearch
-
+repo --name=fedora --mirrorlist=http://mirrors.fedoraproject.org/mirrorlist?repo=fedora-20&arch=$basearch
+repo --name=fedora-updates --mirrorlist=http://mirrors.fedoraproject.org/mirrorlist?repo=updates-released-f20&arch=$basearch
 
 reboot
 
