@@ -205,6 +205,9 @@ mv /usr/lib/locale/locale-archive /usr/lib/locale/locale-archive.tmpl
 
 echo "Cleaning old yum repodata."
 yum clean all
+rm -rf /var/lib/yum/yumdb/*
+rm -rf /var/lib/yum/history/*
+yum history new
 truncate -c -s 0 /var/log/yum.log
 
 echo "Fixing SELinux contexts."

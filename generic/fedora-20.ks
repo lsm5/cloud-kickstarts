@@ -188,6 +188,9 @@ echo "Removing random-seed so it's not the same in every image."
 rm -f /var/lib/random-seed
 
 echo "Cleaning old yum repodata."
+rm -rf /var/lib/yum/yumdb/*
+rm -rf /var/lib/yum/history/*
+yum history new
 yum clean all
 truncate -c -s 0 /var/log/yum.log
 
