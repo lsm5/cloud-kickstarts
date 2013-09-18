@@ -23,8 +23,8 @@ clearpart --all
 part / --size 1024 --fstype ext4
 
 # Repositories
-repo --name=fedora --mirrorlist=http://mirrors.fedoraproject.org/mirrorlist?repo=fedora-20&arch=$basearch
-repo --name=fedora-updates --mirrorlist=http://mirrors.fedoraproject.org/mirrorlist?repo=updates-released-f20&arch=$basearch
+repo --name=fedora --mirrorlist=http://mirrors.fedoraproject.org/mirrorlist?repo=fedora-19&arch=$basearch
+repo --name=fedora-updates --mirrorlist=http://mirrors.fedoraproject.org/mirrorlist?repo=updates-released-f19&arch=$basearch
 
 reboot
 
@@ -33,7 +33,9 @@ reboot
 
 bash
 coreutils
+fedora-release
 filesystem
+iproute
 setup
 yum
 
@@ -103,6 +105,7 @@ mv /usr/lib/locale/locale-archive /usr/lib/locale/locale-archive.tmpl
 /usr/sbin/build-locale-archive
 
 echo "Removing extra packages."
+rm -vf /etc/yum/protected.d/*
 yum -C -y remove passwd --setopt="clean_requirements_on_remove=1"
 yum -C -y remove findutils --setopt="clean_requirements_on_remove=1"
 yum -C -y remove firewalld --setopt="clean_requirements_on_remove=1"
@@ -110,6 +113,7 @@ yum -C -y remove firewalld --setopt="clean_requirements_on_remove=1"
 
 echo "Cleaning old yum repodata."
 yum clean all
+rm -rf /var/lib/yum/yumdb/*
 truncate -c -s 0 /var/log/yum.log
 
 echo "Fixing SELinux contexts."
