@@ -119,6 +119,9 @@ rm -rf /var/lib/yum/history/*
 yum history new || yum history new
 truncate -c -s 0 /var/log/yum.log
 
+echo "Removing boot, since we don't need that."
+rm -rf /boot/*
+
 echo "Fixing SELinux contexts."
 /usr/sbin/fixfiles -R -a restore
 

@@ -110,6 +110,8 @@ yum -C -y remove passwd --setopt="clean_requirements_on_remove=1"
 yum -C -y remove findutils --setopt="clean_requirements_on_remove=1"
 yum -C -y remove firewalld --setopt="clean_requirements_on_remove=1"
 
+echo "Removing boot, since we don't need that."
+rm -rf /boot/*
 
 echo "Cleaning old yum repodata."
 yum clean all
