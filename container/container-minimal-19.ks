@@ -117,7 +117,7 @@ mv /tmp/en /tmp/en_US /usr/share/locale/
 mv /usr/share/i18n/locales/en_US /tmp
 rm -rf /usr/share/i18n/locales/*
 mv /tmp/en_US /usr/share/i18n/locales/
-echo '%_install_langs C:en:en_US:en_US.UTF-8' >> /etc/rpm/rpm.imgcreate
+echo '%_install_langs C:en:en_US:en_US.UTF-8' >> /etc/rpm/macros.imgcreate
 
 echo "Removing extra packages."
 rm -vf /etc/yum/protected.d/*
