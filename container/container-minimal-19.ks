@@ -109,6 +109,15 @@ echo "Minimizing locale-archive."
 localedef --list-archive | grep -v en_US | xargs localedef --delete-from-archive
 mv /usr/lib/locale/locale-archive /usr/lib/locale/locale-archive.tmpl
 /usr/sbin/build-locale-archive
+# this is really kludgy and will be fixed with a better way of building
+# these containers
+mv /usr/share/locale/en /usr/share/locale/en_US /tmp
+rm -rf /usr/share/locale/*
+mv /tmp/en /tmp/en_US /usr/share/locale/
+mv /usr/share/i18n/locales/en_US /tmp
+rm -rf /usr/share/i18n/locales/*
+mv /tmp/en_US /usr/share/i18n/locales/
+echo '%_install_langs C:en:en_US:en_US.UTF-8' >> /etc/rpm/rpm.imgcreate
 
 echo "Removing extra packages."
 rm -vf /etc/yum/protected.d/*
