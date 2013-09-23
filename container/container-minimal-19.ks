@@ -124,7 +124,6 @@ echo '%_install_langs C:en:en_US:en_US.UTF-8' >> /etc/rpm/macros.imgcreate
 echo "Removing extra packages."
 rm -vf /etc/yum/protected.d/*
 yum -C -y remove passwd --setopt="clean_requirements_on_remove=1"
-yum -C -y remove findutils --setopt="clean_requirements_on_remove=1"
 yum -C -y remove firewalld --setopt="clean_requirements_on_remove=1"
 
 echo "Removing boot, since we don't need that."
