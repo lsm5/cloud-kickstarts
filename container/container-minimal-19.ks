@@ -35,7 +35,10 @@ bash
 coreutils
 fedora-release
 filesystem
+findutils
+grep
 iproute
+sed
 setup
 yum
 
