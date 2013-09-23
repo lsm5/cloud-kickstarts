@@ -120,9 +120,7 @@ yum -C -y remove firewalld --setopt="clean_requirements_on_remove=1"
 
 echo "Cleaning old yum repodata."
 yum clean all
-rm -rf /var/lib/yum/yumdb/*
-rm -rf /var/lib/yum/history/*
-yum history new || yum history new
+yum history new
 truncate -c -s 0 /var/log/yum.log
 
 echo "Removing boot, since we don't need that."

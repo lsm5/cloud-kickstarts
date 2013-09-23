@@ -43,7 +43,6 @@ setup
 yum
 
 # removed below
-findutils
 passwd
 # https://bugzilla.redhat.com/show_bug.cgi?id=1004976
 firewalld
