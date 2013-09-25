@@ -5,6 +5,6 @@ for ver in 19 20; do
      -o /tmp/f$ver$size --name "fedora-$ver-$size" --release $ver \
      --format=qcow2 && 
   virt-tar-out -a /tmp/f$ver$size/fedora-$ver-$size/fedora-$ver-$size-sda.qcow2 / - |
-  import - fedora$ver-$size
+  docker import - fedora$ver-$size
 done
 done
