@@ -221,11 +221,6 @@ fi
 # make sure firstboot doesn't start
 echo "RUN_FIRSTBOOT=NO" > /etc/sysconfig/firstboot
 
-# workaround https://bugzilla.redhat.com/show_bug.cgi?id=966888
-if ! grep -q growpart /etc/cloud/cloud.cfg; then
-  sed -i 's/ - resizefs/ - growpart\n - resizefs/' /etc/cloud/cloud.cfg
-fi
-
 # Uncomment this if you want to use cloud init but suppress the creation
 # of an "ec2-user" account. This will, in the absence of further config,
 # cause the ssh key from a metadata source to be put in the root account.
@@ -233,10 +228,6 @@ fi
 #users: []
 #disable_root: 0
 #EOF
-
-# This is a temporary fix to change the default user to "fedora"; this
-# change will be in an upcoming cloud-init update
-sed -i 's/ec2-user/fedora/;s/EC2 user/Fedora Cloud User/' /etc/cloud/cloud.cfg
 
 echo "Removing random-seed so it's not the same in every image."
 rm -f /var/lib/random-seed
