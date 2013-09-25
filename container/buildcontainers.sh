@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -x
 for size in small medium; do
 for ver in 19 20; do
   appliance-creator -c container-$size-$ver.ks -d -v -t /tmp \
