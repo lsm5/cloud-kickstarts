@@ -23,7 +23,7 @@ rootpw --lock --iscrypted locked
 # matching these rules is generated below.
 firewall --service=ssh
 
-bootloader --timeout=1 --append="console=ttyS0,115200n8 console=hvc0 console=tty0" extlinux
+bootloader --timeout=1 --append="console=ttyS0,115200n8 console=tty0" extlinux
 
 network --bootproto=dhcp --device=eth0 --onboot=on
 services --enabled=network,sshd,rsyslog,iptables,cloud-init,cloud-init-local,cloud-config,cloud-final
@@ -87,20 +87,22 @@ rsync
 
 %post --erroronfail
 
-# Create grub.conf for EC2.
-if [[ ! -e /boot/grub/grub.conf ]]; then
-  echo -n "Creating grub.conf for pvgrub"
-  rootuuid=$( awk '$2=="/" { print $1 };'  /etc/fstab )
-  mkdir /boot/grub
-  echo -e 'default=0\ntimeout=0\n\n' > /boot/grub/grub.conf
-  for kv in $( ls -1v /boot/vmlinuz* |grep -v rescue |sed s/.*vmlinuz-//  ); do
-    echo "title Fedora ($kv)" >> /boot/grub/grub.conf
-    echo -e "\troot (hd0)" >> /boot/grub/grub.conf
-    echo -e "\tkernel /boot/vmlinuz-$kv ro root=$rootuuid console=hvc0 LANG=en_US.UTF-8" >> /boot/grub/grub.conf
-    echo -e "\tinitrd /boot/initramfs-$kv.img" >> /boot/grub/grub.conf
-    echo
-  done
-fi
+# Create grub.conf for EC2. This used to be done by appliance creator but
+# anaconda doesn't do it. And, in case appliance-creator is used, we're
+# overriding it here so that both cases get the exact same file.
+# Note that the console line is different -- that's because EC2 provides
+# different virtual hardware, and this is a convenient way to act differently
+echo -n "Creating grub.conf for pvgrub"
+rootuuid=$( awk '$2=="/" { print $1 };'  /etc/fstab )
+mkdir /boot/grub
+echo -e 'default=0\ntimeout=0\n\n' > /boot/grub/grub.conf
+for kv in $( ls -1v /boot/vmlinuz* |grep -v rescue |sed s/.*vmlinuz-//  ); do
+  echo "title Fedora ($kv)" >> /boot/grub/grub.conf
+  echo -e "\troot (hd0)" >> /boot/grub/grub.conf
+  echo -e "\tkernel /boot/vmlinuz-$kv ro root=$rootuuid console=hvc0 LANG=en_US.UTF-8" >> /boot/grub/grub.conf
+  echo -e "\tinitrd /boot/initramfs-$kv.img" >> /boot/grub/grub.conf
+  echo
+done
 
 
 #link grub.conf to menu.lst for ec2 to work
