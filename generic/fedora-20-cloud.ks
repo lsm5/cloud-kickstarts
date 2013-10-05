@@ -50,6 +50,9 @@ kernel
 # a user account with ssh keys.
 cloud-init
 
+# this is used by openstack's cloud orchestration framework (and it's small)
+heat-cfntools
+
 # need this for growpart, because parted doesn't yet support resizepart
 # https://bugzilla.redhat.com/show_bug.cgi?id=966993
 cloud-utils-growpart
