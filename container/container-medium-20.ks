@@ -50,6 +50,7 @@ firewalld
 -parted
 -plymouth   
 -policycoreutils
+-rsyslog
 -selinux-policy-targeted
 
 
