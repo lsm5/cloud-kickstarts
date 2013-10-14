@@ -19,8 +19,9 @@ auth --useshadow --enablemd5
 selinux --enforcing
 rootpw --lock --iscrypted locked
 
-# a static firewall allowing ssh is configured below
-firewall --disabled
+# this is actually not used, but a static firewall
+# matching these rules is generated below.
+firewall --service=ssh
 
 bootloader --timeout=1 --append="console=ttyS0,115200n8 console=tty0" extlinux
 
@@ -65,10 +66,11 @@ dracut-config-generic
 # by anaconda, but appliance-creator needs the hint
 syslinux-extlinux 
 
+# Needed initially, but removed below.
+firewalld
 
 # Basic firewall. If you're going to rely on your cloud service's
-# security groups you can remove iptables-services.
--firewalld
+# security groups you can remove this.
 iptables-services
 
 # cherry-pick a few things from @standard
@@ -133,6 +135,11 @@ echo .
 # this is installed by default but we don't need it in virt
 echo "Removing linux-firmware package."
 yum -C -y remove linux-firmware
+
+# Remove firewalld; was supposed to be optional in F18+, but is required to
+# be present for install/image building.
+echo "Removing firewalld."
+yum -C -y remove firewalld --setopt="clean_requirements_on_remove=1"
 
 # Non-firewalld-firewall
 echo -n "Writing static firewall"
