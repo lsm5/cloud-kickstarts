@@ -61,7 +61,6 @@ echo .
 
 # create devices which appliance-creator does not
 ln -s /proc/kcore /dev/core
-mknod -m 600 /dev/console c 5 1
 mknod -m 660 /dev/loop0 b 7 0
 mknod -m 660 /dev/loop1 b 7 1
 rm -rf /dev/console
