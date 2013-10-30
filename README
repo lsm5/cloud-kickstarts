@@ -1,0 +1,6 @@
+The kickstart file from which the Fedora Cloud image is built now lives in 
+
+https://git.fedorahosted.org/cgit/spin-kickstarts.git/tree/
+
+This repository remains for a) historical purposes and b) future
+experimentation.
