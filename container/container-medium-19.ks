@@ -115,7 +115,7 @@ echo "Compressing cracklib."
 gzip -9 /usr/share/cracklib/pw_dict.pwd
 
 echo "Removing extra packages."
-rm -vf /etc/yum/protected.d/*
+rm -vrf /etc/yum/protected.d/
 yum -C -y remove firewalld --setopt="clean_requirements_on_remove=1"
 
 
@@ -125,11 +125,10 @@ yum history new
 truncate -c -s 0 /var/log/yum.log
 
 echo "Removing boot, since we don't need that."
-rm -rf /boot/*
+rm -rf /boot/
 
 echo "Fixing SELinux contexts."
-/usr/sbin/fixfiles -R -a restore
-
+fixfiles -R -a restore
 
 echo "Zeroing out empty space."
 # This forces the filesystem to reclaim space from deleted files
