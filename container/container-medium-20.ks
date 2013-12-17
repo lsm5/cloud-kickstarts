@@ -37,6 +37,9 @@ rsync
 # https://bugzilla.redhat.com/show_bug.cgi?id=1004976
 firewalld
 
+# include appliance-tools
+appliance-tools
+
 # Some things from @core we can do without inside the container
 -audit
 -biosdevname
