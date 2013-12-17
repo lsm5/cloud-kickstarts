@@ -42,14 +42,12 @@ sed
 setup
 yum
 
-# removed below
-passwd
+# probably not needed in a container
+-passwd
 # https://bugzilla.redhat.com/show_bug.cgi?id=1004976
 firewalld
 
 %end
-
-
 
 %post --erroronfail
 
@@ -94,7 +92,6 @@ cat > /etc/hosts << EOF
 EOF
 echo .
 
-
 # Because memory is scarce resource in most cloud/virt environments,
 # and because this impedes forensics, we are differing from the Fedora
 # default of having /tmp on tmpfs.
@@ -103,7 +100,6 @@ systemctl mask tmp.mount
 
 echo "Removing random-seed so it's not the same in every image."
 rm -f /var/lib/random-seed
-
 
 echo "Compressing cracklib."
 gzip -9 /usr/share/cracklib/pw_dict.pwd
@@ -115,29 +111,28 @@ mv /usr/lib/locale/locale-archive /usr/lib/locale/locale-archive.tmpl
 # this is really kludgy and will be fixed with a better way of building
 # these containers
 mv /usr/share/locale/en /usr/share/locale/en_US /tmp
-rm -rf /usr/share/locale/*
+rm -rf /usr/share/locale/
 mv /tmp/en /tmp/en_US /usr/share/locale/
 mv /usr/share/i18n/locales/en_US /tmp
-rm -rf /usr/share/i18n/locales/*
+rm -rf /usr/share/i18n/locales/
 mv /tmp/en_US /usr/share/i18n/locales/
 echo '%_install_langs C:en:en_US:en_US.UTF-8' >> /etc/rpm/macros.imgcreate
 
 echo "Removing extra packages."
-rm -vf /etc/yum/protected.d/*
+rm -vf /etc/yum/protected.d/
 yum -C -y remove passwd --setopt="clean_requirements_on_remove=1"
 yum -C -y remove firewalld --setopt="clean_requirements_on_remove=1"
 
 echo "Removing boot, since we don't need that."
-rm -rf /boot/*
+rm -rf /boot/
 
 echo "Cleaning old yum repodata."
 yum clean all
-rm -rf /var/lib/yum/yumdb/*
+rm -rf /var/lib/yum/yumdb/
 truncate -c -s 0 /var/log/yum.log
 
 echo "Fixing SELinux contexts."
 /usr/sbin/fixfiles -R -a restore
-
 
 echo "Zeroing out empty space."
 # This forces the filesystem to reclaim space from deleted files

@@ -37,9 +37,6 @@ rsync
 # https://bugzilla.redhat.com/show_bug.cgi?id=1004976
 firewalld
 
-# include appliance-tools
-appliance-tools
-
 # Some things from @core we can do without inside the container
 -audit
 -biosdevname
@@ -56,10 +53,7 @@ appliance-tools
 -rsyslog
 -selinux-policy-targeted
 
-
 %end
-
-
 
 %post --erroronfail
 
@@ -104,7 +98,6 @@ cat > /etc/hosts << EOF
 EOF
 echo .
 
-
 # Because memory is scarce resource in most cloud/virt environments,
 # and because this impedes forensics, we are differing from the Fedora
 # default of having /tmp on tmpfs.
@@ -114,14 +107,12 @@ systemctl mask tmp.mount
 echo "Removing random-seed so it's not the same in every image."
 rm -f /var/lib/random-seed
 
-
 echo "Compressing cracklib."
 gzip -9 /usr/share/cracklib/pw_dict.pwd
 
 echo "Removing extra packages."
 rm -vf /etc/yum/protected.d/
 yum -C -y remove firewalld --setopt="clean_requirements_on_remove=1"
-
 
 echo "Cleaning old yum repodata."
 yum clean all
@@ -132,8 +123,7 @@ echo "Removing boot, since we don't need that."
 rm -rf /boot/
 
 echo "Fixing SELinux contexts."
-fixfiles -R -a restore
-
+/usr/sbin/fixfiles -R -a restore
 
 echo "Zeroing out empty space."
 # This forces the filesystem to reclaim space from deleted files

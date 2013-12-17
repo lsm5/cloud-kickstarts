@@ -1,6 +1,6 @@
 #!/bin/bash -x
 repoowner=lsm5
-for size in medium; do
+for size in small medium; do
     for ver in 20; do
         unset LIBGUESTFS_BACKEND
         if [[ "$size" == 'medium' ]]; then
