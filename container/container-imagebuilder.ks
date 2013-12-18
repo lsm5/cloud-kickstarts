@@ -20,7 +20,7 @@ rootpw --lock --iscrypted locked
 
 zerombr
 clearpart --all
-part / --size 1024 --fstype ext4
+part / --size 2048 --fstype ext4
 
 # Repositories
 repo --name=fedora --mirrorlist=http://mirrors.fedoraproject.org/mirrorlist?repo=fedora-20&arch=$basearch
@@ -37,8 +37,9 @@ rsync
 # https://bugzilla.redhat.com/show_bug.cgi?id=1004976
 firewalld
 
-# include appliance-tools
+# image building tools
 appliance-tools
+libguestfs-tools
 
 # Some things from @core we can do without inside the container
 -audit
@@ -114,7 +115,7 @@ echo "Compressing cracklib."
 gzip -9 /usr/share/cracklib/pw_dict.pwd
 
 echo "Removing extra packages."
-rm -vf /etc/yum/protected.d/
+rm -vf /etc/yum/protected.d/*
 yum -C -y remove firewalld --setopt="clean_requirements_on_remove=1"
 
 echo "Cleaning old yum repodata."
