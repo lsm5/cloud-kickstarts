@@ -2,7 +2,7 @@
 repoowner=lsm5
 for size in small medium; do
     for ver in 20 rawhide; do
-        unset LIBGUESTFS_BACKEND
+        export LIBGUESTFS_BACKEND=direct
         if [[ "$size" == 'medium' && "$ver" == '20' ]]; then
             repo=$repoowner/fedora
         else
@@ -14,7 +14,6 @@ for size in small medium; do
         virt-tar-out -a \
             /tmp/f$ver$size/fedora-$ver-$size/fedora-$ver-$size-sda.qcow2 \
             / - | gzip --best > /tmp/fedora-$ver-$size.tar.gz
-        export LIBGUESTFS_BACKEND=direct
         cat /tmp/fedora-$ver-$size.tar.gz | docker import - $repo
     done
 done
